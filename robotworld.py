@@ -27,5 +27,35 @@ class RobotWorld:
         else:
             return False
         
+    def remove_robot(self, robot):
+        if robot in self.robots:
+            self.robots.remove(robot)
+            self.get_square(robot.get_location()).remove_robot()
+            return True
+        else:
+            return False
+        
+        
+    def add_wall(self, location):
+        return self.get_square(location).set_wall()
+    
+    def remove_wall(self, location):
+        return self.get_square(location).remove_wall()
+    
+    def get_number_of_robots(self):
+        return len(self.robots)
+  
+    def take_turn(self):
+        if self.get_number_of_robots() > 0:
+            current = self.robots[self.turn]
+            if current is not None:
+                current.take_turn()
+                self.turn = (self.turn + 1) % self.get_number_of_robots()
 
-     
+    def take_turn_all(self):
+        for _ in range(self.get_number_of_robots()):
+            self.take_turn()
+
+
+
+        

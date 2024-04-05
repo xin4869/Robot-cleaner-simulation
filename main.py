@@ -6,4 +6,6 @@ def main():
     new = current.get_target_coordinates(Direction.east, 2)
     print(new)
 
+    
+
 main()

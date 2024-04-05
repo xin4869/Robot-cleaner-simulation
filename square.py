@@ -10,11 +10,27 @@ class Square():
         return self.is_wall
     
     def is_empty(self):
-        return not self.is_wall and self.robot is None
+        if self.is_wall:
+            print ("Wall Square - cannot move!")
+            return False
+        else:
+            if self.robot is not None:
+                print ("Occupied square - cannot move!")
+                return False
+            else:
+                return True
+    
     
     def set_wall(self):
         if self.is_empty:
             self.is_wall = True
+            return True
+        else:
+            return False
+    
+    def remove_wall(self):
+        if self.is_wall:
+            self.is_wall = False
             return True
         else:
             return False
