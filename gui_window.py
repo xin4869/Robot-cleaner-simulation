@@ -45,13 +45,17 @@ class GuiWindow(QtWidgets.QMainWindow):
     def create_robot(self):
         text, ok = QtWidgets.QInputDialog.getText(self, 'Create Robot', 'Enter robot name:')
         if ok:
-            Robot(text)
+            new_robot = Robot(text)
             QtWidgets.QMessageBox.information(self, "Success", f"Robot {text} created successfully!")
+
 
     def add_to_world(self):
         text, ok = QtWidgets.QInputDialog.getText(self, 'Add Robot to World', 'Enter robot name:')
         if ok:
-            
+            if text in [robot.get_name() for robot in self.world.robots]:
+                QtWidgets.QMessageBox.warning(self, "Error", f"Robot {text} already exists in the world!")
+            else:
+                self.world.robots.append()
 
 
 

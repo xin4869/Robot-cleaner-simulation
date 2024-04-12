@@ -1,6 +1,7 @@
 from direction import Direction
 from error import Error
 
+robot_list = []
 class Robot():
     def __init__(self, name):
         self.set_name(name)
@@ -9,6 +10,7 @@ class Robot():
         self.facing = None
         self.brain = None
         self.destroyed is False
+        robot_list.append(self)
         
     def set_name(self, name):
         if not name:
