@@ -39,6 +39,9 @@ class Robot():
             return True
         else:
             return False
+    
+    def set_location(self, location):
+        self.location = location
         
     def get_location(self):
         return self.location
