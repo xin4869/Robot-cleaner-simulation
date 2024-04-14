@@ -79,7 +79,13 @@ class GuiWindow(QtWidgets.QMainWindow):
                         QtWidgets.QMessageBox.warning(self, "Error", "Please click on square of the game grid where Robot {name} should be placed!")
                     else:
                         location = Coordinates(self.clicked_x, self.clicked_y)
+                        new_robot.set_location(location)
                         self.world.set_robot(new_robot, location, new_robot.get_facing())    
+                        
+                        self.world.robots.append(new_robot)
+                        self.added_robot.append(new_robot)
+
+                        QtWidgets.QMessageBox.information(self, "Success", f"Robot {name} has been initialized successfully!")
 
     
     def mousePressEvent(self, event):

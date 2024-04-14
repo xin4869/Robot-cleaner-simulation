@@ -26,10 +26,22 @@ class Robot():
     
     def get_brain(self):
         return self.brain
-    
-    def get_world(self):
-        return self.world
 
+    def set_location(self, location):
+        self.location = location
+
+    def get_location(self):
+        return self.location
+    
+    def get_location_square(self):
+        return self.world.get_square(self.location)
+    
+    def set_facing(self, facing):
+        self.facing = facing
+    
+    def get_facing(self):
+        return self.facing
+    
     def set_world(self, world, location, facing):
         target_square = world.get_square(location)
         if target_square.is_empty and self.world is None:
@@ -40,18 +52,9 @@ class Robot():
         else:
             return False
     
-    def set_location(self, location):
-        self.location = location
-        
-    def get_location(self):
-        return self.location
-    
-    def get_location_square(self):
-        return self.world.get_square(self.location)
-    
-    def get_facing(self):
-        return self.facing
-    
+    def get_world(self):
+        return self.world
+
     def destroy(self):
         self.destroyed = True
 
@@ -72,7 +75,6 @@ class Robot():
             print("Robot is functioning normally!")
             return False
        
-    
     def is_stuck(self):
         if not self.is_broken():
             world = self.get_world()
