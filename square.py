@@ -6,7 +6,7 @@ class Square():
     def get_robot(self):
         return self.robot
     
-    def is_wall_square(self):
+    def is_wall(self):
         return self.is_wall
     
     def is_empty(self):

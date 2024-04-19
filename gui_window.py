@@ -93,8 +93,11 @@ class GuiWindow(QtWidgets.QMainWindow):
 
     def mousePressEvent(self, event):
 
-        self.clicked_x = event.x()
-        self.clicked_y = event.y()
+        pixel_x = event.x()
+        self.clicked_x = pixel_x // self.square_size
+
+        pixel_y = event.y()
+        self.clicked_y = pixel_y // self.square_size
 
         if self.clicked_x not in range(0, self.world.width) or self.clicked_y not in range(0, self.world.height):
             QtWidgets.QMessageBox.warning(self, "Error", "Please click within the grid!")
@@ -130,6 +133,24 @@ class GuiWindow(QtWidgets.QMainWindow):
         self.horizontal.addWidget(self.button_initbot)
 
     def draw_grid(self):
-        
-        
+        for y in range(self.world.get_height()):
+            for x in range(self.world.get_width()):              
+                x_gui = x * self.square_size
+                y_gui = y * self.square_size
+                square_gui = QtWidgets.QGraphicsRectItem(x_gui, y_gui, self.square_size, self.square_size)
 
+                square = self.world.get_square(Coordinates(x, y))
+                if square.is_wall():
+                    square_gui.setBrush(QtGui.QColor(128, 128, 128))
+                else:
+                    square_gui.setBrush(QtGui.QColor(255, 255, 255))
+
+                self.scene.addItem(square_gui)
+    
+    def draw_robots(self):
+
+
+
+
+
+                
