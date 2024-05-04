@@ -1,13 +1,20 @@
 class Square():
-    def __init__(self, is_wall = False):
+    def __init__(self, wall_flag = False):
         self.robot = None
-        self.is_wall = is_wall
+        self.wall_flag = wall_flag
+        self.init = False
 
     def get_robot(self):
         return self.robot
     
     def is_wall(self):
-        return self.is_wall
+        return self.wall_flag
+    
+    def set_init(self):
+        self.init = True
+
+    def is_init(self):
+        return self.init
     
     def is_empty(self):
         if self.is_wall:
