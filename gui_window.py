@@ -181,7 +181,7 @@ class GuiWindow(QtWidgets.QMainWindow):
                         self.new_robot.init_location = location
                         self.new_robot.set_location(location)
                         if self.new_robot not in self.world.robots:
-                            self.world.set_robot(self.new_robot, location, self.new_robot.get_facing())   
+                            self.world.add_robot(self.new_robot, location, self.new_robot.get_facing())   
 
                             self.world.robots.append(self.new_robot)
                             self.added_robot.append(self.new_robot)                           
