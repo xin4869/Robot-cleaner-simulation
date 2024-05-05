@@ -9,7 +9,7 @@ class Robot():
         self.location = None
         self.facing = None
         self.brain = None
-        self.destroyed is False
+        self.destroyed = False
 
         self.init_location = None
         self.init_facing = None
