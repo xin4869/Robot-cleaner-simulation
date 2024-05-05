@@ -158,11 +158,10 @@ class GuiWindow(QtWidgets.QMainWindow):
 
 
     def mousePressEvent(self, event):
-        coordinate_gui = event.pos()
-        pixel_x = coordinate_gui.x()
+        pixel_x = event.pos().x()
         self.clicked_x = pixel_x // self.square_size
 
-        pixel_y = coordinate_gui.y()
+        pixel_y = event.pos().y()
         self.clicked_y = pixel_y // self.square_size
 
         if self.clicked_x not in range(0, self.world.width) or self.clicked_y not in range(0, self.world.height):
