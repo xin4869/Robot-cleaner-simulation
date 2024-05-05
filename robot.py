@@ -1,5 +1,6 @@
 from direction import Direction
 from error import Error
+from robotworld import RobotWorld
 
 robot_list = []
 class Robot():
@@ -66,6 +67,9 @@ class Robot():
         self.destroyed = False 
         self.set_location(self.init_location)
         self.set_facing(self.init_facing)
+
+        self.world.get_square(self.location).remove_robot()
+        self.world.get_square(self.init_location).set_robot()
     
     def is_broken(self):
         if self.destroyed:

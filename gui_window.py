@@ -201,7 +201,8 @@ class GuiWindow(QtWidgets.QMainWindow):
                                     self.world.add_robot(self.new_robot, location, self.new_robot.get_facing())   
 
                                     self.world.robots.append(self.new_robot)
-                                    self.added_robot.append(self.new_robot)                           
+                                    self.added_robot.append(self.new_robot)  
+                                    self.clicked_square.set_robot(self.new_robot)                         
                                     QtWidgets.QMessageBox.information(self, "Success", f"Robot {self.new_robot.get_name()} has been initialized successfully!")
 
                                     print(self.added_robot) ################ TO BE DELETED
