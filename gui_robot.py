@@ -35,7 +35,7 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
 
     def rotate(self):
         facing = self.robot.get_facing()
-        degree = {Direction.NORTH: 0, Direction.EAST: 90, Direction.SOUTH: 180, Direction.WEST: 270}
+        degree = {Direction.north: 0, Direction.east: 90, Direction.south: 180, Direction.west: 270}
         
         self.setRotation(degree[facing])
 
