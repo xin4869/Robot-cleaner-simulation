@@ -6,6 +6,8 @@ from robot import Robot
 from direction import Direction
 from square import Square
 
+from gui_robot import GuiRobot
+
 class GuiWindow(QtWidgets.QMainWindow):
     def __init__(self, square_size):
         super().__init__()
@@ -18,13 +20,13 @@ class GuiWindow(QtWidgets.QMainWindow):
         self.main_layout = QtWidgets.QHBoxLayout()
         self.centralWidget().setLayout(self.main_layout)
 
-        self.init_button()
+        self.init_world_bt()
         self.button_layout = QtWidgets.QVBoxLayout()
         self.button_layout.addWidget(self.button_initworld)
-        self.button_layout.addWidget(self.button_initbot)
+        
         self.main_layout.addLayout(self.button_layout)
 
-
+        self.grid_drawn = False
 
         self.clicked_x = None
         self.clicked_y = None
@@ -33,7 +35,6 @@ class GuiWindow(QtWidgets.QMainWindow):
 
         self.init_window()
         
-
 
     def init_window(self):
         self.setGeometry(1000, 500, 1200, 850)
@@ -49,13 +50,10 @@ class GuiWindow(QtWidgets.QMainWindow):
         self.main_layout.addWidget(self.view)
 
 
-    def init_button(self):
+    def init_world_bt(self):
         self.button_initworld = QtWidgets.QPushButton('Initialize grid', self)
         self.button_initworld.clicked.connect(self.create_world)
         
-
-        self.button_initbot = QtWidgets.QPushButton('Add Robot', self)
-        self.button_initbot.clicked.connect(self.add_to_world)
 
     def create_world(self):
         text,ok = QtWidgets.QInputDialog.getMultiLineText(self, 'Create Robot World', 'Enter world width dimension, eg.10:')
@@ -80,6 +78,34 @@ class GuiWindow(QtWidgets.QMainWindow):
                         msg_box.setText("Robot World initialized successfully!")
                         msg_box.exec()
                         self.draw_grid()
+                        self.grid_drawn = True
+                        
+                        self.init_bot_bt()
+                        self.button_layout.removeWidget(self.button_initworld)
+                        self.button_initworld.deleteLater()
+
+
+    def draw_grid(self):
+        for y in range(self.world.get_height()):
+            for x in range(self.world.get_width()):              
+                x_gui = x * self.square_size
+                y_gui = y * self.square_size
+                square_gui = QtWidgets.QGraphicsRectItem(x_gui, y_gui, self.square_size, self.square_size)
+
+                square = self.world.get_square(Coordinates(x, y))
+                if square.is_wall():
+                    square_gui.setBrush(QtGui.QColor(128, 128, 128))
+                else:
+                    square_gui.setBrush(QtGui.QColor(255, 255, 255))
+
+                self.scene.addItem(square_gui)
+
+
+    def init_bot_bt(self):
+        if self.grid_drawn:
+            self.button_initbot = QtWidgets.QPushButton('Add Robot', self)
+            self.button_initbot.clicked.connect(self.add_to_world)
+            self.button_layout.addWidget(self.button_initbot)
 
 
     def add_to_world(self):
@@ -111,33 +137,39 @@ class GuiWindow(QtWidgets.QMainWindow):
                         return
 
                 if direction.lower() == "n":
-                    new_robot.set_facing(Direction.north)
+                    new_robot.init_facing = Direction.north
+                    new_robot.set_facing(Direction.north)    
                 elif direction.lower() == "s":
+                    new_robot.init_facing = Direction.south
                     new_robot.set_facing(Direction.south)
                 elif direction.lower() == "e":
+                    new_robot.init_facing = Direction.east
                     new_robot.set_facing(Direction.east)
                 elif direction.lower() == "w":
+                    new_robot.init_facing = Direction.west
                     new_robot.set_facing(Direction.west)
 
                 
                 self.new_robot = new_robot
 
                 QtWidgets.QMessageBox.information(self, "Initialize robot location", f"Click on square of the game grid where Robot {name} should be placed!")
+                
+                self.draw_robots()
 
 
     def mousePressEvent(self, event):
-
-        pixel_x = event.x()
+        coordinate_gui = event.pos()
+        pixel_x = coordinate_gui.x()
         self.clicked_x = pixel_x // self.square_size
 
-        pixel_y = event.y()
+        pixel_y = coordinate_gui.y()
         self.clicked_y = pixel_y // self.square_size
 
         if self.clicked_x not in range(0, self.world.width) or self.clicked_y not in range(0, self.world.height):
             QtWidgets.QMessageBox.warning(self, "Error", "Please click within the grid!")
         else:
             if self.new_robot is None:
-                QtWidgets.QMessageBox.warning(self, "Error", "Please add robot before setting location!")
+                QtWidgets.QMessageBox.warning(self, "Error", "Please add robot first!")
             else:
                 if self.world is None:
                     QtWidgets.QMessageBox.warning(self, "Error", "Please initialize Robot World first!")
@@ -147,38 +179,32 @@ class GuiWindow(QtWidgets.QMainWindow):
                     if not clicked_square.is_empty:
                         QtWidgets.QMessageBox.warning(self, "Error", "Please click on an empty square!")
                     else:
-                        clicked_square.set_init()
+                        self.new_robot.init_location = location
                         self.new_robot.set_location(location)
                         if self.new_robot not in self.world.robots:
-                            self.world.set_robot(self.new_robot, location, self.new_robot.get_facing())                      
+                            self.world.set_robot(self.new_robot, location, self.new_robot.get_facing())   
+
                             self.world.robots.append(self.new_robot)
-                            self.added_robot.append(self.new_robot)
+                            self.added_robot.append(self.new_robot)                           
                             QtWidgets.QMessageBox.information(self, "Success", f"Robot {self.new_robot.get_name()} has been initialized successfully!")
                         else:
                             QtWidgets.QMessageBox.warning(self, "Error", f"Robot {self.new_robot.get_name()} already exists in the world!")
                 
 
-
-
-    def draw_grid(self):
-        for y in range(self.world.get_height()):
-            for x in range(self.world.get_width()):              
-                x_gui = x * self.square_size
-                y_gui = y * self.square_size
-                square_gui = QtWidgets.QGraphicsRectItem(x_gui, y_gui, self.square_size, self.square_size)
-
-                square = self.world.get_square(Coordinates(x, y))
-                if square.is_wall():
-                    square_gui.setBrush(QtGui.QColor(128, 128, 128))
-                else:
-                    square_gui.setBrush(QtGui.QColor(255, 255, 255))
-
-                self.scene.addItem(square_gui)
-                
-    
-   # def draw_robots(self):
+      
+    def draw_robots(self):
+        for robot in self.world.robots:
+            robot_gui = GuiRobot(robot, self.square_size)
+            self.added_robot_gui.append(robot_gui)
+            self.scene.addItem(robot_gui)
         
 
+ 
+
+
+
+                
+  
 
 
 

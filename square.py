@@ -2,7 +2,6 @@ class Square():
     def __init__(self, wall_flag = False):
         self.robot = None
         self.wall_flag = wall_flag
-        self.init = False
 
     def get_robot(self):
         return self.robot
@@ -10,12 +9,7 @@ class Square():
     def is_wall(self):
         return self.wall_flag
     
-    def set_init(self):
-        self.init = True
 
-    def is_init(self):
-        return self.init
-    
     def is_empty(self):
         if self.is_wall:
             print ("Wall Square - cannot move!")

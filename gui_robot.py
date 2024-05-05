@@ -51,11 +51,10 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
 
         self.setBrush(brush)
 
-    def reset_location(self):
-        QtWidgets.QMessageBox.information(self, "Reset robot", "Robot has been reset successfully!")
-
     def mousePressEvent(self, event):
-        pass
+        if self.robot.destroyed:
+            self.robot.fix()
+            event.accept()
 
 
 

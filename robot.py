@@ -10,6 +10,10 @@ class Robot():
         self.facing = None
         self.brain = None
         self.destroyed is False
+
+        self.init_location = None
+        self.init_facing = None
+
         robot_list.append(self)
         
     def set_name(self, name):
@@ -60,6 +64,8 @@ class Robot():
 
     def fix(self):
         self.destroyed = False 
+        self.set_location(self.init_location)
+        self.set_facing(self.init_facing)
     
     def is_broken(self):
         if self.destroyed:
