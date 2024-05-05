@@ -11,7 +11,7 @@ class Square():
     
 
     def is_empty(self):
-        if self.is_wall:
+        if self.is_wall():
             print ("Wall Square - cannot move!")
             return False
         else:

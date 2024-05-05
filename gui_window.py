@@ -179,7 +179,8 @@ class GuiWindow(QtWidgets.QMainWindow):
         print(f"pixel_x: {pixel_x} | pixel_y: {pixel_y}")
 
         if self.grid_drawn:
-            if self.clicked_x not in range(0, self.world.width) or self.clicked_y not in range(0, self.world.height):
+            if pixel_x < 0 or pixel_y < 0 or pixel_x > self.square_size * self.world.width or pixel_y > self.square_size * self.world.height: 
+            # if self.clicked_x not in range(0, self.world.width) or self.clicked_y not in range(0, self.world.height):
                 QtWidgets.QMessageBox.warning(self, "Error", "Please click within the grid!")
             else:
                 if self.new_robot is None:
@@ -191,8 +192,8 @@ class GuiWindow(QtWidgets.QMainWindow):
                     else:
                         if self.adding_robot:  ###### Flag of choosing robot location               
                             location = Coordinates(self.clicked_x, self.clicked_y)                  
-                            clicked_square =self.world.get_square(location)              
-                            if not clicked_square.is_empty:
+                            clicked_square = self.world.get_square(location)              
+                            if not clicked_square.is_empty():
                                 QtWidgets.QMessageBox.warning(self, "Error", "Please click on an empty square!")
                             else:
                                 self.new_robot.init_location = location
@@ -202,7 +203,7 @@ class GuiWindow(QtWidgets.QMainWindow):
 
                                     self.world.robots.append(self.new_robot)
                                     self.added_robot.append(self.new_robot)  
-                                    self.clicked_square.set_robot(self.new_robot)                         
+                                    clicked_square.set_robot(self.new_robot)                         
                                     QtWidgets.QMessageBox.information(self, "Success", f"Robot {self.new_robot.get_name()} has been initialized successfully!")
 
                                     print(self.added_robot) ################ TO BE DELETED
