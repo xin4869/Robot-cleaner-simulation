@@ -1,4 +1,6 @@
 from PyQt6 import QtWidgets, QtGui, QtCore
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPainter, QColor, QPen
 
 from coordinates import Coordinates
 from robotworld import RobotWorld
@@ -27,8 +29,10 @@ class GuiWindow(QtWidgets.QMainWindow):
         self.main_layout.addLayout(self.button_layout)
 
         self.grid_drawn = False
+        self.obs_added = False
+
         self.adding_robot = False
-        self.adding_wall = False
+        self.adding_obs = False
 
         self.clicked_x = None
         self.clicked_y = None
@@ -83,6 +87,8 @@ class GuiWindow(QtWidgets.QMainWindow):
                         self.grid_drawn = True
                         
                         self.init_bot_bt()
+                        self.init_obs_bt()
+
                         self.button_layout.removeWidget(self.button_initworld)
                         self.button_initworld.deleteLater()
 
@@ -102,6 +108,35 @@ class GuiWindow(QtWidgets.QMainWindow):
 
                 self.scene.addItem(square_gui)
 
+    def init_obs_bt(self):
+        if self.grid_drawn:
+            self.button_initobs = QtWidgets.QPushButton('Place obstacle', self)
+            self.button_initobs.clicked.connect(self.add_obstacle)
+            self.button_layout.addWidget(self.button_initobs)
+
+    def add_obstacle(self):
+        if self.grid_drawn:
+            QtWidgets.QMessageBox.information(self, "Add obstacle", "Please click on the square in which you want to place the obstacle.")
+            self.adding_obs = True
+            self.adding_robot = False
+
+    def draw_obs(self, coordinates):
+        if self.grid_drawn:
+            square = self.world.get_square(coordinates)
+            if square.is_wall(): 
+                pen = QPen(Qt.Red)
+                pen.setWidth(3)
+                painter = QPainter()
+                painter.setPen(pen)
+
+                x_gui = coordinates.get_x() * self.square_size
+                y_gui = coordinates.get_y() * self.square_size
+
+                painter.drawLine(x_gui, y_gui, x_gui + self.square_size, y_gui + self.square_size)
+                painter.drawLine(x_gui + self.square_size, y_gui, x_gui, y_gui + self.square_size)
+
+
+                painter.end()
 
     def init_bot_bt(self):
         if self.grid_drawn:
@@ -157,6 +192,7 @@ class GuiWindow(QtWidgets.QMainWindow):
 
                 QtWidgets.QMessageBox.information(self, "Initialize robot location", f"Click on square of the game grid where Robot {name} should be placed!")
                 self.adding_robot = True
+                self.adding_obs = False
                 
                 
 
@@ -182,14 +218,24 @@ class GuiWindow(QtWidgets.QMainWindow):
             # if self.clicked_x not in range(0, self.world.width) or self.clicked_y not in range(0, self.world.height):
                 QtWidgets.QMessageBox.warning(self, "Error", "Please click within the grid!")
             else:
-                if self.new_robot is None:
-                    QtWidgets.QMessageBox.warning(self, "Error", "Please add robot first!")
-                    print(self.added_robot) ########### TO BE DELETED
+                if self.world is None:
+                    QtWidgets.QMessageBox.warning(self, "Error", "Please initialize Robot World first!")     
                 else:
-                    if self.world is None:
-                        QtWidgets.QMessageBox.warning(self, "Error", "Please initialize Robot World first!")
-                    else:
-                        if self.adding_robot:  ###### Flag of choosing robot location               
+                    if self.adding_obs: ###### Flag of choosing obstacle location
+                            location = Coordinates(self.clicked_x, self.clicked_y)
+                            clicked_square = self.world.get_square(location)
+                            if not clicked_square.is_empty():
+                                QtWidgets.QMessageBox.warning(self, "Error", "Please click on an empty square!")
+                            else:
+                                clicked_square.set_wall()
+                                self.draw_obs(location)
+                                self.adding_obs = False
+
+                    elif self.adding_robot:  ###### Flag of choosing robot location 
+                        if self.new_robot is None:
+                            QtWidgets.QMessageBox.warning(self, "Error", "Please add robot first!")
+                            print(self.added_robot) ########### TO BE DELETED              
+                        else:
                             location = Coordinates(self.clicked_x, self.clicked_y)                  
                             clicked_square = self.world.get_square(location)              
                             if not clicked_square.is_empty():
@@ -207,19 +253,18 @@ class GuiWindow(QtWidgets.QMainWindow):
 
                                     print(self.added_robot) ################ TO BE DELETED
                                     
-                                    self.adding_robot = False
-
-                                    self.draw_robots()
+                                    self.draw_robots(self.new_robot)
+                                    
+                                    self.adding_robot = False                             
                                 else:
                                     QtWidgets.QMessageBox.warning(self, "Error", f"Robot {self.new_robot.get_name()} already exists in the world! Please click Add Robot to add another robot!")
-                        
+                                   
 
       
-    def draw_robots(self):
-        for robot in self.world.robots:
-            robot_gui = GuiRobot(robot, self.square_size)
-            self.added_robot_gui.append(robot_gui)
-            self.scene.addItem(robot_gui)
+    def draw_robots(self, robot):
+        robot_gui = GuiRobot(robot, self.square_size)
+        self.added_robot_gui.append(robot_gui)
+        self.scene.addItem(robot_gui)
         
 
  

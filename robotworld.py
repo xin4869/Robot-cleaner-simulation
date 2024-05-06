@@ -19,6 +19,9 @@ class RobotWorld:
     def get_square(self, location):
         return self.board[location.get_y()][location.get_x()]
     
+    def get_board(self):
+        return self.board
+    
     def add_robot(self, robot, location, facing):
         if robot.set_world(self, location, facing):
             self.robots.append(robot)
