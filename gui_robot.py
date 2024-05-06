@@ -9,8 +9,8 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
         self.triangle()
         self.update()
         
-        brush = QtGui.QBrush(QtCore.Qt.BrushStyle.SolidPattern)
-        self.setBrush(brush)
+        # brush = QtGui.QBrush(QtCore.Qt.BrushStyle.SolidPattern)
+        # self.setBrush(brush)
 
 
     def triangle(self):
@@ -40,14 +40,17 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
         self.setRotation(degree[facing])
 
     def color(self):
-        brush = QtGui.QBrush(QtCore.Qt.BrushStyle.BDiagPattern)
+        brush = QtGui.QBrush()
 
         if self.robot.is_broken():
+            brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
             brush.setColor(QtGui.QColor(255, 0, 0))
         elif self.robot.is_stuck():
-            brush.setColor(QtGui.QColor(255, 255, 0))
+            brush.setStyle(QtCore.Qt.BrushStyle.DiagCrossPattern)
+            brush.setColor(QtGui.QColor(255, 221, 51))
         else:
-            brush.setColor(QtGui.QColor(0, 0, 255))
+            brush.setStyle(QtCore.Qt.BrushStyle.Dense4Pattern)
+            brush.setColor(QtGui.QColor(180, 160, 210))
 
         self.setBrush(brush)
 

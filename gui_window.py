@@ -160,7 +160,6 @@ class GuiWindow(QtWidgets.QMainWindow):
                 
                 
 
-
     def mousePressEvent(self, event):
         # pixel_x = event.pos().x()
         # self.clicked_x = pixel_x // self.square_size
