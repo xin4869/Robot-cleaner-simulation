@@ -10,6 +10,8 @@ from square import Square
 
 from gui_robot import GuiRobot
 
+import random
+
 class GuiWindow(QtWidgets.QMainWindow):
     def __init__(self, square_size):
         super().__init__()
@@ -22,14 +24,20 @@ class GuiWindow(QtWidgets.QMainWindow):
         self.main_layout = QtWidgets.QHBoxLayout()
         self.centralWidget().setLayout(self.main_layout)
 
+        self.init_rules_bt()
         self.init_world_bt()
+
         self.button_layout = QtWidgets.QVBoxLayout()
-        self.button_layout.addWidget(self.button_initworld)
-        
+
+        self.button_layout.addWidget(self.button_rules)
+        self.button_layout.addWidget(self.button_initworld)    
+
         self.main_layout.addLayout(self.button_layout)
 
         self.grid_drawn = False
         self.obs_added = False
+        self.added_obs_amount = 0
+        self.world_finalized = False
 
         self.adding_robot = False
         self.adding_obs = False
@@ -55,7 +63,29 @@ class GuiWindow(QtWidgets.QMainWindow):
         self.view.show()
         self.main_layout.addWidget(self.view)
 
+    def init_rules_bt(self):
+        self.button_rules = QtWidgets.QPushButton('Robot World Rules', self)
+        self.button_rules.clicked.connect(self.read_rules)  
 
+    def read_rules(self):
+        info_box = QtWidgets.QMessageBox(self) ### set the main window as the parent for the message box
+        info_box.setWindowTitle("Robot World Rules")
+        info_box.setText("Click the button Initialize grid.\n "
+                         "Afterwards, click the buttons Place obstacles and Add Robot.\n "
+                                                     "When you are done, click the button Finalize World to confirm the set up.\n ")
+        info_box.exec()
+        # info_box = QtWidgets.QMessageBox.information(self, "Robot world rules", "Click the button Initialize grid.\n "
+        #                                              "Afterwards, click the buttons Place obstacles and Add Robot.\n "
+        #                                              "When you are done, click the button Finalize World to confirm the set up.\n ")
+        main_window_center = self.rect().center()
+        print(main_window_center)
+        info_box_center = info_box.rect().center()
+        print(info_box_center)
+
+        info_box.setGeometry(main_window_center.x(), main_window_center.y(), 10, 10)
+        
+        print(info_box_center)
+        
     def init_world_bt(self):
         self.button_initworld = QtWidgets.QPushButton('Initialize grid', self)
         self.button_initworld.clicked.connect(self.create_world)
@@ -90,6 +120,7 @@ class GuiWindow(QtWidgets.QMainWindow):
                         
                         self.init_bot_bt()
                         self.init_obs_bt()
+                        self.init_finalize_bt()
 
                         self.button_layout.removeWidget(self.button_initworld)
                         self.button_initworld.deleteLater()
@@ -200,7 +231,7 @@ class GuiWindow(QtWidgets.QMainWindow):
         # self.clicked_y = pixel_y // self.square_size
 
         scene_pos = self.view.mapToScene(event.pos())
-        pixel_x = scene_pos.x() - 123
+        pixel_x = scene_pos.x() - 182
         pixel_y = scene_pos.y() - 15
         self.clicked_x = int((pixel_x/self.square_size))
         self.clicked_y = int((pixel_y/self.square_size))
@@ -224,6 +255,7 @@ class GuiWindow(QtWidgets.QMainWindow):
                                 QtWidgets.QMessageBox.warning(self, "Error", "Please click on an empty square!")
                             else:
                                 clicked_square.set_wall()
+                                self.added_obs_amount += 1
                                 self.draw_obs(location)
                                 self.adding_obs = False
 
@@ -245,7 +277,7 @@ class GuiWindow(QtWidgets.QMainWindow):
                                     self.world.robots.append(self.new_robot)
                                     self.added_robot.append(self.new_robot)  
                                     clicked_square.set_robot(self.new_robot)                         
-                                    QtWidgets.QMessageBox.information(self, "Success", f"Robot {self.new_robot.get_name()} has been initialized successfully!")
+                                    #QtWidgets.QMessageBox.information(self, "Success", f"Robot {self.new_robot.get_name()} has been initialized successfully!")
 
                                     print(self.added_robot) ################ TO BE DELETED
                                     
@@ -262,8 +294,60 @@ class GuiWindow(QtWidgets.QMainWindow):
         self.added_robot_gui.append(robot_gui)
         self.scene.addItem(robot_gui)
         
+    
+    def init_finalize_bt(self):
+        self.button_finalize = QtWidgets.QPushButton('Finalize Robot World', self)
+        self.button_finalize.clicked.connect(self.finalize_world)
+        self.button_layout.addWidget(self.button_finalize)
 
- 
+    def finalize_world(self):
+        if not len(self.added_robot_gui) > 0 or self.added_obs_amount < 3:  
+            ## either condition is true, warning message will be displayed  
+            ### if len() > 0 and added_obs_amount > 3: .....  
+            ### else: error message
+
+            QtWidgets.QMessageBox.warning(self, "Error", "Please add at least one robot and three obstacles first!")
+        else: 
+            self.world_finalized = True
+
+            self.button_layout.removeWidget(self.button_initbot)
+            self.button_initbot.deleteLater()
+
+            self.button_layout.removeWidget(self.button_initobs)
+            self.button_initobs.deleteLater()
+
+            self.button_layout.removeWidget(self.button_finalize)
+            self.button_finalize.deleteLater()
+
+            self.place_drits()
+
+    def place_drits(self):
+        if self.world_finalized:
+                num_dirts = random.randint(10, 100)
+                for _ in range(num_dirts):
+                    while True:
+                        x = random.randint(0, self.world.width - 1)
+                        y = random.randint(0, self.world.height - 1)
+
+                        square = self.world.get_square(Coordinates(x, y))
+                        if square.is_empty():
+                            break
+                    
+                    dirt_size = 5
+
+                    x_gui = x * self.square_size + random.uniform(3, self.square_size - dirt_size)
+                    y_gui = y * self.square_size + random.uniform(3, self.square_size - dirt_size)
+
+                    dirt = QtWidgets.QGraphicsEllipseItem(x_gui, y_gui, dirt_size, dirt_size)
+                    
+                    brush = QtGui.QBrush(QtCore.Qt.BrushStyle.Dense3Pattern)
+                    brush.setColor(QtGui.QColor(150, 75, 0))  ### Brown color brush
+                    dirt.setBrush(brush)
+
+                    self.scene.addItem(dirt)
+
+        
+
 
 
 

@@ -12,8 +12,6 @@ def main():
     gui = GuiWindow(100)
 
     sys.exit(app.exec())
-
-
     
 if __name__ == "__main__":
     main()
