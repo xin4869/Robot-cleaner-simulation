@@ -9,6 +9,8 @@ class Dirt():
         self.y = y
         self.size = size
 
+    def get_location(self):
+        return Coordinates(self.x, self.y)
 
     def draw_dirt(self, scene, square_size):
         x_gui = self.x * square_size + random.uniform(3, square_size - self.size)

@@ -336,11 +336,17 @@ class GuiWindow(QtWidgets.QMainWindow):
                             break
                     
                     dirt = Dirt(x, y, 5)
+                    square.added_dirt.append(dirt)
+
                     dirt.draw_dirt(self.scene, self.square_size)
                     self.added_dirt.append(dirt)
 
     def remove_dirts(self, dirt):
         self.added_dirt.remove(dirt)
+
+        square = self.world.get_square(dirt.get_location())
+        square.added_dirt.remove(dirt)
+
         self.scene.removeItem(dirt)
         
 

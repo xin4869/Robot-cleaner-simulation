@@ -1,6 +1,7 @@
 class Square():
     def __init__(self):
         self.robot = None
+        self.added_dirt = []
         self.wall_flag = False
 
     def get_robot(self):
