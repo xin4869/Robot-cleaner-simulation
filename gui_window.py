@@ -7,6 +7,7 @@ from robotworld import RobotWorld
 from robot import Robot
 from direction import Direction
 from square import Square
+from dirt import Dirt
 
 from gui_robot import GuiRobot
 
@@ -17,6 +18,7 @@ class GuiWindow(QtWidgets.QMainWindow):
         super().__init__()
         self.added_robot = []
         self.added_robot_gui = []
+        self.added_dirt = []
         self.world = None
         self.square_size = square_size
 
@@ -333,20 +335,18 @@ class GuiWindow(QtWidgets.QMainWindow):
                         if square.is_empty():
                             break
                     
-                    dirt_size = 5
+                    dirt = Dirt(x, y, 5)
+                    dirt.draw_dirt(self.scene, self.square_size)
+                    self.added_dirt.append(dirt)
 
-                    x_gui = x * self.square_size + random.uniform(3, self.square_size - dirt_size)
-                    y_gui = y * self.square_size + random.uniform(3, self.square_size - dirt_size)
-
-                    dirt = QtWidgets.QGraphicsEllipseItem(x_gui, y_gui, dirt_size, dirt_size)
-                    
-                    brush = QtGui.QBrush(QtCore.Qt.BrushStyle.Dense3Pattern)
-                    brush.setColor(QtGui.QColor(150, 75, 0))  ### Brown color brush
-                    dirt.setBrush(brush)
-
-                    self.scene.addItem(dirt)
-
+    def remove_dirts(self, dirt):
+        self.added_dirt.remove(dirt)
+        self.scene.removeItem(dirt)
         
+
+
+                
+                   
 
 
 
