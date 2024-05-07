@@ -49,7 +49,7 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
             brush.setStyle(QtCore.Qt.BrushStyle.DiagCrossPattern)
             brush.setColor(QtGui.QColor(255, 221, 51))
         else:
-            brush.setStyle(QtCore.Qt.BrushStyle.Dense4Pattern)
+            brush.setStyle(QtCore.Qt.BrushStyle.FDiagPattern)
             brush.setColor(QtGui.QColor(180, 160, 210))
 
         self.setBrush(brush)

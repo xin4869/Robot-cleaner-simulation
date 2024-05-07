@@ -62,22 +62,24 @@ class GuiWindow(QtWidgets.QMainWindow):
         
 
     def create_world(self):
-        text,ok = QtWidgets.QInputDialog.getMultiLineText(self, 'Create Robot World', 'Enter world width dimension, eg.10:')
-        if ok:
-            if text == "":
-                QtWidgets.QMessageBox.warning(self, "Error", "Please enter width dimensions!")
-            elif text.isdigit() == False: 
-                QtWidgets.QMessageBox.warning(self, "Error", "Please enter only numeric values!")
-            else:
-                width = int(text)
-                text,ok = QtWidgets.QInputDialog.getMultiLineText(self, 'Create Robot World', 'Enter world height dimension, eg.8:')
-                if ok:
-                    if text == "":
-                        QtWidgets.QMessageBox.warning(self, "Error", "Please enter height dimensions!")
-                    elif text.isdigit() == False: 
-                        QtWidgets.QMessageBox.warning(self, "Error", "Please enter only numeric values!")
-                    else:
-                        height = int(text)
+        # text,ok = QtWidgets.QInputDialog.getMultiLineText(self, 'Create Robot World', 'Enter world width dimension, eg.10:')
+        # if ok:
+        #     if text == "":
+        #         QtWidgets.QMessageBox.warning(self, "Error", "Please enter width dimensions!")
+        #     elif text.isdigit() == False: 
+        #         QtWidgets.QMessageBox.warning(self, "Error", "Please enter only numeric values!")
+        #     else:
+        #         width = int(text)
+        #         text,ok = QtWidgets.QInputDialog.getMultiLineText(self, 'Create Robot World', 'Enter world height dimension, eg.8:')
+        #         if ok:
+        #             if text == "":
+        #                 QtWidgets.QMessageBox.warning(self, "Error", "Please enter height dimensions!")
+        #             elif text.isdigit() == False: 
+        #                 QtWidgets.QMessageBox.warning(self, "Error", "Please enter only numeric values!")
+        #             else:
+        #                 height = int(text)
+                        width = 10
+                        height = 8
                         self.world = RobotWorld(width, height)
                         #QtWidgets.QMessageBox.information(self, "Success", "Robot World initialized successfully!")
                         # msg_box = QtWidgets.QMessageBox()
@@ -100,11 +102,9 @@ class GuiWindow(QtWidgets.QMainWindow):
                 y_gui = y * self.square_size
                 square_gui = QtWidgets.QGraphicsRectItem(x_gui, y_gui, self.square_size, self.square_size)
 
-                square = self.world.get_square(Coordinates(x, y))
-                if square.is_wall():
-                    square_gui.setBrush(QtGui.QColor(128, 128, 128))
-                else:
-                    square_gui.setBrush(QtGui.QColor(255, 255, 255))
+                square = self.world.get_square(Coordinates(x, y))    
+
+                square_gui.setBrush(QtGui.QColor(255, 255, 255))
 
                 self.scene.addItem(square_gui)
 
@@ -124,20 +124,16 @@ class GuiWindow(QtWidgets.QMainWindow):
         if self.grid_drawn:
             square = self.world.get_square(coordinates)
             if square.is_wall(): 
-                pen = QPen(Qt.Red)
-                pen.setWidth(3)
-                painter = QPainter()
-                painter.setPen(pen)
-
                 x_gui = coordinates.get_x() * self.square_size
                 y_gui = coordinates.get_y() * self.square_size
 
-                painter.drawLine(x_gui, y_gui, x_gui + self.square_size, y_gui + self.square_size)
-                painter.drawLine(x_gui + self.square_size, y_gui, x_gui, y_gui + self.square_size)
+                square_gui = QtWidgets.QGraphicsRectItem(x_gui, y_gui, self.square_size, self.square_size)
+                
+                brush = QtGui.QBrush(QtCore.Qt.BrushStyle.Dense3Pattern)   ####### what are QtGui, QtCore, and Qt? Difference?
+                brush.setColor(QtGui.QColor(0, 0, 0))
+                square_gui.setBrush(brush)
 
-
-                painter.end()
-
+                self.scene.addItem(square_gui)
     def init_bot_bt(self):
         if self.grid_drawn:
             self.button_initbot = QtWidgets.QPushButton('Add Robot', self)
