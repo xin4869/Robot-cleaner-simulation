@@ -2,7 +2,7 @@ from direction import Direction
 from error import Error
 from robotworld import RobotWorld
 
-robot_list = []
+
 class Robot():
     def __init__(self, name):
         self.set_name(name)
@@ -15,7 +15,9 @@ class Robot():
         self.init_location = None
         self.init_facing = None
 
-        robot_list.append(self)
+        # self.setting_algorithm = False
+
+        self.cleaned_square = []
         
     def set_name(self, name):
         if not name:
@@ -32,6 +34,9 @@ class Robot():
     def get_brain(self):
         return self.brain
 
+    # def algorithm_flag(self):
+    #     return self.setting_algorithm
+    
     def set_location(self, location):
         self.location = location
 
@@ -62,31 +67,25 @@ class Robot():
 
     def destroy(self):
         self.destroyed = True
-
-    def fix(self):
-        self.destroyed = False 
+    
+    def reset(self):
+        self.destroyed = False
         self.set_location(self.init_location)
         self.set_facing(self.init_facing)
 
         self.world.get_square(self.location).remove_robot()
         self.world.get_square(self.init_location).set_robot()
-    
-    def is_broken(self):
-        if self.destroyed:
-            print ("Robot is destroyed!")
-            return True
-        elif self.brain is None:
+        
+    def is_incomplete(self):
+        if self.brain is None:
             print ("No algorithm has been set!")
             return True
         elif self.get_world() is None:
             print("No working environment set for the robot!")
             return True
-        else:
-            print("Robot is functioning normally!")
-            return False
-       
+        
     def is_stuck(self):
-        if not self.is_broken():
+        if not self.is_broken() and not self.is_incomplete():
             world = self.get_world()
             current_location = self.get_location()
 
@@ -118,7 +117,13 @@ class Robot():
         self.destroy()
         print("Action failed! Robot is broken!")
         return False
+    
 
+    def is_broken(self):
+        if self.destroyed or self.is_incomplete():
+            print ("Robot is destroyed!")
+            return True   
+        
         
     def spin(self, new_facing):
         if self.is_broken():

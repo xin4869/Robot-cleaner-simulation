@@ -8,12 +8,15 @@ from robot import Robot
 from direction import Direction
 from square import Square
 from dirt import Dirt
+from brain import Brain
+from random_path import RandomPath
 
 from gui_robot import GuiRobot
 
 import random
 
 class GuiWindow(QtWidgets.QMainWindow):
+   
     def __init__(self, square_size):
         super().__init__()
         self.added_robot = []
@@ -64,6 +67,9 @@ class GuiWindow(QtWidgets.QMainWindow):
         self.view.adjustSize()
         self.view.show()
         self.main_layout.addWidget(self.view)
+    
+    def get_scene(self):
+        return self.scene
 
     def init_rules_bt(self):
         self.button_rules = QtWidgets.QPushButton('Robot World Rules', self)
@@ -74,7 +80,10 @@ class GuiWindow(QtWidgets.QMainWindow):
         info_box.setWindowTitle("Robot World Rules")
         info_box.setText("Click the button Initialize grid.\n "
                          "Afterwards, click the buttons Place obstacles and Add Robot.\n "
-                                                     "When you are done, click the button Finalize World to confirm the set up.\n ")
+                        "When you are done, click the button Finalize World to confirm the set up.\n "
+                        "By clicking on the robots to reset them to their initial location, and as well as setting algorithms to run. \n "
+                        "Yello robots(incomplete): no algorithm has been set.\n"
+                        "Red robots awww"  )
         info_box.exec()
         # info_box = QtWidgets.QMessageBox.information(self, "Robot world rules", "Click the button Initialize grid.\n "
         #                                              "Afterwards, click the buttons Place obstacles and Add Robot.\n "
@@ -167,6 +176,7 @@ class GuiWindow(QtWidgets.QMainWindow):
                 square_gui.setBrush(brush)
 
                 self.scene.addItem(square_gui)
+
     def init_bot_bt(self):
         if self.grid_drawn:
             self.button_initbot = QtWidgets.QPushButton('Add Robot', self)
@@ -233,10 +243,14 @@ class GuiWindow(QtWidgets.QMainWindow):
         # self.clicked_y = pixel_y // self.square_size
 
         scene_pos = self.view.mapToScene(event.pos())
+        
         pixel_x = scene_pos.x() - 182
         pixel_y = scene_pos.y() - 15
+        
         self.clicked_x = int((pixel_x/self.square_size))
         self.clicked_y = int((pixel_y/self.square_size))
+        
+        location = Coordinates(self.clicked_x, self.clicked_y)
 
 
         print(f"Clicked on square ({self.clicked_x}, {self.clicked_y})")
@@ -279,22 +293,46 @@ class GuiWindow(QtWidgets.QMainWindow):
                                     self.world.robots.append(self.new_robot)
                                     self.added_robot.append(self.new_robot)  
                                     clicked_square.set_robot(self.new_robot)                         
-                                    #QtWidgets.QMessageBox.information(self, "Success", f"Robot {self.new_robot.get_name()} has been initialized successfully!")
+                                    
 
                                     print(self.added_robot) ################ TO BE DELETED
                                     
-                                    self.draw_robots(self.new_robot)
+                                    robot_gui = self.draw_robots(self.new_robot)
                                     
-                                    self.adding_robot = False                             
+                                    self.adding_robot = False            
+
+                                    QtWidgets.QMessageBox.information(self, "Set algorithm", f"Click on the Robot {self.new_robot.get_name()} to set an algorithm!") 
+
                                 else:
                                     QtWidgets.QMessageBox.warning(self, "Error", f"Robot {self.new_robot.get_name()} already exists in the world! Please click Add Robot to add another robot!")
+
+    # def setting_algorithm(self, robot):               
+    #                 elif clicked_square.get_robot() is not None and clicked_square.get_robot().setting_algorithm():
+                        
+    #                     clicked_robot = clicked_square.get_robot()
+    #                     algorithm, ok = QtWidgets.QInputDialog.getItem(self, "Set Algorithm", "Choose an algorithm:", Brain.algorithms, 0, False)
+    #                     if ok:
+    #                         if algorithm == "Random Path":
+    #                             brain = RandomPath(clicked_robot)
+    #                             clicked_robot.set_brain(brain)
+                            
+    #                         elif algorithm == "A* Path":
+    #                             pass
+    #                         elif algorithm == "Greedy Path":
+    #                             pass
+    #                         else:
+    #                             pass
+                
+
                                    
 
       
     def draw_robots(self, robot):
-        robot_gui = GuiRobot(robot, self.square_size)
+        robot_gui = GuiRobot(robot, self.square_size, self)    #### making main window widget as parent of robot graphic item
         self.added_robot_gui.append(robot_gui)
         self.scene.addItem(robot_gui)
+
+        return robot_gui
         
     
     def init_finalize_bt(self):

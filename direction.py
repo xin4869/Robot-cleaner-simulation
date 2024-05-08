@@ -1,3 +1,4 @@
+import random
 class Direction():
     north = (0, -1)
     south = (0, 1)
@@ -12,6 +13,9 @@ class Direction():
     
     def get_next_counterclockwise(facing):
         return Direction.direction_list[(Direction.direction_list.index(facing) - 1) % 4]
+    
+    def random_direction():
+        return random.choice(Direction.direction_list)
     
     def get_degrees(direction):
         if direction == Direction.north:
