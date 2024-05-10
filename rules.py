@@ -5,7 +5,7 @@ class Rules(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Robot World Rules")
-        self.setFixedSize(600, 900)
+        self.setFixedSize(600, 1200)
         rule = QtWidgets.QTextEdit(self)
 
        
@@ -16,13 +16,13 @@ class Rules(QtWidgets.QDialog):
                     "3.  Click the button <u>Finalize Robot World</u> to finish the set up.<br>"
                     "Note: Once you have finalized the set up, you cannot make changes.<br><br>"
                     "4. If the robot is destroyed(red), you may click on the robot to reset it.<br>"
-                    "Note: A stuck robot will be destroyed after 8 failed attempts to move.<p>"
+                    "Note: A stuck robot will be destroyed after 8 failed attempts.<p>"
                     
 
                      "<h2 style = 'text-align:center;'>Add robot</h2>"
-                    "<p style = 'font-size:16pt;'>1. Click the button <u>Add Robot</u>.<br>"
-                    "2. Click on the squares in which you want to place the robot.<br>"
-                    "3. Click on robots to set algorithms. <br> "
+                    "<p style = 'font-size:16pt;'>1. Click the button <u>Add Robot</u>.<br><br>"
+                    "2. Click on the squares in which you want to place the robot.<br><br>"
+                    "3. Click on robots to set algorithms. <br><br>"
                     "Note: You may click on robots to reset algorithms later.<p>"
 
                     "<h2 style = 'text-align:center;'>Add obstacles</h2>"
@@ -46,7 +46,7 @@ class Rules(QtWidgets.QDialog):
         rule.setFontFamily("Arial")
         rule.setHtml(text)
         # rule.setText(text)
-        rule.setFixedSize(600, 900)
+        rule.setFixedSize(600, 1200)
         # rule.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
         # document = rule.document()
