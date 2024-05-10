@@ -87,19 +87,21 @@ class GuiWindow(QtWidgets.QMainWindow):
 
     def init_rules_bt(self):
         self.button_rules = QtWidgets.QPushButton('Rules', self)
+        self.button_rules.clicked.connect(lambda: self.change_bt_color(self.button_rules))
         self.button_rules.clicked.connect(self.read_rules)
-        self.button_rules.clicked.connect(self.change_bt_color, self.button_rules)
+        
 
     def read_rules(self):
         info_box = Rules(self)
+        info_box.finished.connect(lambda: self.change_bt_color_back(self.button_rules))
         info_box.exec()
-        
-        self.change_bt_color_back(self.button_rules)
+
         
     def init_world_bt(self):
         self.button_initworld = QtWidgets.QPushButton('Initialize grid', self)
+        self.button_initworld.clicked.connect(lambda: self.change_bt_color(self.button_initworld))
         self.button_initworld.clicked.connect(self.create_world)
-        self.button_initworld.clicked.connect(self.change_bt_color, self.button_initworld)
+        
         
     def create_world(self):
         # text,ok = QtWidgets.QInputDialog.getMultiLineText(self, 'Create Robot World', 'Enter world width dimension, eg.10:')
@@ -154,7 +156,6 @@ class GuiWindow(QtWidgets.QMainWindow):
             self.button_initobs = QtWidgets.QPushButton('Place obstacle', self)
 
             self.button_initobs.clicked.connect(self.add_obstacle)
-            self.button_initobs.clicked.connect(self.change_bt_color, self.button_initobs)
 
             self.button_layout.addWidget(self.button_initobs)
 
@@ -184,8 +185,8 @@ class GuiWindow(QtWidgets.QMainWindow):
         if self.grid_drawn:
             self.button_initbot = QtWidgets.QPushButton('Add Robot', self)
 
+            self.button_initbot.clicked.connect(lambda: self.change_bt_color(self.button_initbot))
             self.button_initbot.clicked.connect(self.add_to_world)
-            self.button_initbot.clicked.connect(self.change_bt_color, self.button_initbot)
 
             self.button_layout.addWidget(self.button_initbot)
 
@@ -198,6 +199,7 @@ class GuiWindow(QtWidgets.QMainWindow):
                 response = QtWidgets.QMessageBox.warning(self, "Error", f"Robot {name} has already been added!")               
                 name, ok = QtWidgets.QInputDialog.getText(self, 'Initialize Robot', 'Enter robot name:')
                 if not ok:
+                    self.change_bt_color_back(self.button_initbot)
                     return     
             new_robot = Robot(name)      
 
@@ -208,6 +210,7 @@ class GuiWindow(QtWidgets.QMainWindow):
                     response = QtWidgets.QMessageBox.warning(self, "Error", "Invalid direction! Please enter a valid direction.")            
                     direction, ok = QtWidgets.QInputDialog.getText(self, "Initialize robot direction", f"Which direction should Robot {name} face? Enter one of these: N, S, E, W")                 
                     if not ok:
+                        self.change_bt_color_back(self.button_initbot)
                         return
                     
                 if direction.lower() == "n":
@@ -229,6 +232,10 @@ class GuiWindow(QtWidgets.QMainWindow):
                 #QtWidgets.QMessageBox.information(self, "Initialize robot location", f"Click on square of the game grid where Robot {name} should be placed!")
                 self.adding_robot = True
                 self.adding_obs = False
+            else:
+                self.change_bt_color_back(self.button_initbot)
+        else:
+            self.change_bt_color_back(self.button_initbot)
                 
                 
 
@@ -262,42 +269,39 @@ class GuiWindow(QtWidgets.QMainWindow):
             if pixel_x < 0 or pixel_y < 0 or pixel_x > self.square_size * self.world.width or pixel_y > self.square_size * self.world.height: 
             # if self.clicked_x not in range(0, self.world.width) or self.clicked_y not in range(0, self.world.height):
                 QtWidgets.QMessageBox.warning(self, "Error", "Please click within the grid!")
-            else:
-                if self.world is None:
-                    QtWidgets.QMessageBox.warning(self, "Error", "Please initialize Robot World first!")     
-                else:
-                    if self.adding_obs: ###### Flag of choosing obstacle location
-                            location = Coordinates(self.clicked_x, self.clicked_y)
-                            clicked_square = self.world.get_square(location)
-                            if not clicked_square.is_empty():
-                                QtWidgets.QMessageBox.warning(self, "Error", "Please click on an empty square!")
-                            else:
-                                clicked_square.set_wall()
-                                self.added_obs_amount += 1
-                                self.draw_obs(location)
-                                # self.adding_obs = False
-
-                    elif self.adding_robot:  ###### Flag of choosing robot location 
-                        if self.new_robot is None:
-                            QtWidgets.QMessageBox.warning(self, "Error", "Please add robot first!")
-                                      
+            else:             
+                if self.adding_obs: ###### Flag of choosing obstacle location
+                        location = Coordinates(self.clicked_x, self.clicked_y)
+                        clicked_square = self.world.get_square(location)
+                        if not clicked_square.is_empty():
+                            QtWidgets.QMessageBox.warning(self, "Error", "Please click on an empty square!")
                         else:
-                            location = Coordinates(self.clicked_x, self.clicked_y)                  
-                            clicked_square = self.world.get_square(location)              
-                            if not clicked_square.is_empty():
-                                QtWidgets.QMessageBox.warning(self, "Error", "Please click on an empty square!")
-                            else:
-                                self.new_robot.init_location = location
-                                self.new_robot.set_location(location)
-                                if self.new_robot not in self.world.robots:
-                                    self.world.add_robot(self.new_robot, location, self.new_robot.get_facing())   
-                                    self.world.robots.append(self.new_robot)
-                                    clicked_square.set_robot(self.new_robot)                         
-                                    
-                                    self.draw_robots(self.new_robot)
+                            clicked_square.set_wall()
+                            self.added_obs_amount += 1
+                            self.draw_obs(location)
+                            # self.adding_obs = False
 
-                                    self.change_bt_color_back(self.button_initbot)                                  
-                                    self.adding_robot = False            
+                elif self.adding_robot:  ###### Flag of choosing robot location 
+                    if self.new_robot is None:
+                        QtWidgets.QMessageBox.warning(self, "Error", "Please add robot first!")
+                                    
+                    else:
+                        location = Coordinates(self.clicked_x, self.clicked_y)                  
+                        clicked_square = self.world.get_square(location)              
+                        if not clicked_square.is_empty():
+                            QtWidgets.QMessageBox.warning(self, "Error", "Please click on an empty square!")
+                        else:
+                            self.new_robot.init_location = location
+                            self.new_robot.set_location(location)
+                            if self.new_robot not in self.world.robots:
+                                self.world.add_robot(self.new_robot, location, self.new_robot.get_facing())   
+                                self.world.robots.append(self.new_robot)
+                                clicked_square.set_robot(self.new_robot)                         
+                                
+                                self.draw_robots(self.new_robot)
+
+                                self.change_bt_color_back(self.button_initbot)                                  
+                                self.adding_robot = False            
 
                                     #QtWidgets.QMessageBox.information(self, "Set algorithm", f"Click on the Robot {self.new_robot.get_name()} to set an algorithm!") 
 
@@ -323,6 +327,7 @@ class GuiWindow(QtWidgets.QMainWindow):
             key = event.key()
             if key == QtCore.Qt.Key.Key_W:
                 self.adding_obs = True
+                self.change_bt_color(self.button_initobs)
 
     def keyReleaseEvent(self, event):
         if self.obs_bt_clicked:
@@ -343,8 +348,8 @@ class GuiWindow(QtWidgets.QMainWindow):
     def init_finalize_bt(self):
         self.button_finalize = QtWidgets.QPushButton('Finalize Robot World', self)
 
+        self.button_finalize.clicked.connect(lambda: self.change_bt_color(self.button_finalize))
         self.button_finalize.clicked.connect(self.finalize_world)
-        self.button_finalize.clicked.connect(self.change_bt_color, self.button_finalize)
       
         self.button_layout.addWidget(self.button_finalize)
 
@@ -355,6 +360,7 @@ class GuiWindow(QtWidgets.QMainWindow):
             ### else: error message
 
             QtWidgets.QMessageBox.warning(self, "Error", "Please add at least one robot and three obstacles first!")
+            self.change_bt_color_back(self.button_finalize)
         else: 
             self.button_layout.removeWidget(self.button_initbot)
             self.button_initbot.deleteLater()

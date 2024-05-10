@@ -27,10 +27,9 @@ class Rules(QtWidgets.QDialog):
 
                     "<h2 style = 'text-align:center;'>Add obstacles</h2>"
                     "<p style = 'font-size:16pt;'>1. Click the button <u>Place obstacle</u>.<br><br>"
-                    "2. Hold down the key W. <br><br>"
-                    "3. Click on the squares in which you want to place the obstacle.<br>"
-                    "Note: You may not remove added obstacles.<br><br>"
-                    "4. Release the key only when you finish adding all obstacles. <p> "
+                    "2. Hold the key W while clicking on squares to place obstacles. <br>"
+                    "Note: Release the key W only when you finish adding all obstacles.<br>"
+                    "Note: You may not remove added obstacles.<p> "
 
                     "<h2 style='text-align:center;'>Robot colors</h2>"
                     "<p style = 'font-size:16pt;'> 1. <strong>Gray</strong>: No algorithm has been set.<br><br>"
