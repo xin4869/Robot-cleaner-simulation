@@ -19,13 +19,13 @@ class GuiWindow(QtWidgets.QMainWindow):
    
     def __init__(self, square_size):
         super().__init__()
-        self.added_robot = []
         self.added_robot_gui = []
-        self.added_dirt = []
         self.world = None
         self.square_size = square_size
 
-        self.setCentralWidget(QtWidgets.QWidget())
+        central_widget = QtWidgets.QWidget()
+        self.setCentralWidget(central_widget)
+
         self.main_layout = QtWidgets.QHBoxLayout()
         self.centralWidget().setLayout(self.main_layout)
 
@@ -53,6 +53,10 @@ class GuiWindow(QtWidgets.QMainWindow):
         self.new_robot = None
 
         self.init_window()
+
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.update_gui_robots)
+        self.timer.start(10)
         
 
     def init_window(self):
@@ -62,6 +66,7 @@ class GuiWindow(QtWidgets.QMainWindow):
 
         self.scene = QtWidgets.QGraphicsScene()
         self.scene.setSceneRect(0, 0, 1000, 900)
+    
 
         self.view = QtWidgets.QGraphicsView(self.scene, self)
         self.view.adjustSize()
@@ -243,18 +248,23 @@ class GuiWindow(QtWidgets.QMainWindow):
         # self.clicked_y = pixel_y // self.square_size
 
         scene_pos = self.view.mapToScene(event.pos())
-        
+        # test = event.scenePos()
+        test_2 = event.pos()
+
+        print("widget_pos?viewport? event.pos(): ", test_2)
+        print("event.pos() mapped to scene coordinates: ", scene_pos)
+      
         pixel_x = scene_pos.x() - 182
         pixel_y = scene_pos.y() - 15
-        
+      
         self.clicked_x = int((pixel_x/self.square_size))
         self.clicked_y = int((pixel_y/self.square_size))
         
         location = Coordinates(self.clicked_x, self.clicked_y)
 
-
         print(f"Clicked on square ({self.clicked_x}, {self.clicked_y})")
-        print(f"pixel_x: {pixel_x} | pixel_y: {pixel_y}")
+        print(f"event.pos() mapped scene coordinates - 182: {pixel_x} | event.pos() mapped scene coordinates - 15: {pixel_y}")
+
 
         if self.grid_drawn:
             if pixel_x < 0 or pixel_y < 0 or pixel_x > self.square_size * self.world.width or pixel_y > self.square_size * self.world.height: 
@@ -278,7 +288,7 @@ class GuiWindow(QtWidgets.QMainWindow):
                     elif self.adding_robot:  ###### Flag of choosing robot location 
                         if self.new_robot is None:
                             QtWidgets.QMessageBox.warning(self, "Error", "Please add robot first!")
-                            print(self.added_robot) ########### TO BE DELETED              
+                                      
                         else:
                             location = Coordinates(self.clicked_x, self.clicked_y)                  
                             clicked_square = self.world.get_square(location)              
@@ -289,15 +299,10 @@ class GuiWindow(QtWidgets.QMainWindow):
                                 self.new_robot.set_location(location)
                                 if self.new_robot not in self.world.robots:
                                     self.world.add_robot(self.new_robot, location, self.new_robot.get_facing())   
-
                                     self.world.robots.append(self.new_robot)
-                                    self.added_robot.append(self.new_robot)  
                                     clicked_square.set_robot(self.new_robot)                         
                                     
-
-                                    print(self.added_robot) ################ TO BE DELETED
-                                    
-                                    robot_gui = self.draw_robots(self.new_robot)
+                                    self.draw_robots(self.new_robot)
                                     
                                     self.adding_robot = False            
 
@@ -359,9 +364,9 @@ class GuiWindow(QtWidgets.QMainWindow):
             self.button_layout.removeWidget(self.button_finalize)
             self.button_finalize.deleteLater()
 
-            self.place_drits()
+            self.place_dirts()
 
-    def place_drits(self):
+    def place_dirts(self):
         if self.world_finalized:
                 num_dirts = random.randint(10, 100)
                 for _ in range(num_dirts):
@@ -374,23 +379,27 @@ class GuiWindow(QtWidgets.QMainWindow):
                             break
                     
                     dirt = Dirt(x, y, 5)
-                    square.added_dirt.append(dirt)
+                    square.dirts_per_square.append(dirt)
+                    self.world.dirts.append(dirt)   #### logical dirt added
 
-                    dirt.draw_dirt(self.scene, self.square_size)
-                    self.added_dirt.append(dirt)
+                    dirt.draw_dirt(self.scene, self.square_size)  #### gui dirt added
+                     
+    def remove_dirts(self, dirt):  #### remove gui dirt from the window/screen right away when remove_dirts() is called
 
-    def remove_dirts(self, dirt):
-        self.added_dirt.remove(dirt)
+        self.scene.removeItem(dirt.get_dirt_gui())
 
-        square = self.world.get_square(dirt.get_location())
-        square.added_dirt.remove(dirt)
-
-        self.scene.removeItem(dirt)
-        
+        square = self.world.get_square(dirt.get_location())   ##### removing logical dirt
+        square.dirts_per_square.remove(dirt)
+        self.world.dirts.remove(dirt)
 
 
-                
-                   
+    def get_gui_robots(self):
+        return self.added_robot_gui
+    
+    def update_gui_robots(self):
+        for robot_gui in self.added_robot_gui:
+            robot_gui.update()
+
 
 
 

@@ -6,6 +6,7 @@ class RobotWorld:
         self.height = height
         self.board = [[Square() for x in range(width)] for y in range(height)]
         self.robots = []
+        self.dirts = []
         self.turn = 0
 
 

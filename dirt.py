@@ -8,6 +8,7 @@ class Dirt():
         self.x = x
         self.y = y
         self.size = size
+        self.dirt_gui = None
 
     def get_location(self):
         return Coordinates(self.x, self.y)
@@ -16,13 +17,18 @@ class Dirt():
         x_gui = self.x * square_size + random.uniform(3, square_size - self.size)
         y_gui = self.y * square_size + random.uniform(3, square_size - self.size)
 
-        dirt = QtWidgets.QGraphicsEllipseItem(x_gui, y_gui, self.size, self.size)
+        self.dirt_gui = QtWidgets.QGraphicsEllipseItem(x_gui, y_gui, self.size, self.size)
                     
         brush = QtGui.QBrush(QtCore.Qt.BrushStyle.Dense3Pattern)
         brush.setColor(QtGui.QColor(150, 75, 0))  ### Brown color brush
-        dirt.setBrush(brush)
+        self.dirt_gui.setBrush(brush)
 
-        scene.addItem(dirt)
+        scene.addItem(self.dirt_gui)
+
+    def get_dirt_gui(self):
+        return self.dirt_gui
+
+  
 
 
 

@@ -78,10 +78,8 @@ class Robot():
         
     def is_incomplete(self):
         if self.brain is None:
-            print ("No algorithm has been set!")
             return True
         elif self.get_world() is None:
-            print("No working environment set for the robot!")
             return True
         
     def is_stuck(self):

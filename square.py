@@ -1,7 +1,7 @@
 class Square():
     def __init__(self):
         self.robot = None
-        self.added_dirt = []
+        self.dirts_per_square = []
         self.wall_flag = False
 
     def get_robot(self):
@@ -13,11 +13,9 @@ class Square():
 
     def is_empty(self):
         if self.is_wall():
-            print ("Wall Square - cannot move!")
             return False
         else:
             if self.robot is not None:
-                print ("Occupied square - cannot move!")
                 return False
             else:
                 return True

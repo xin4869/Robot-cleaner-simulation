@@ -78,9 +78,12 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
             event.accept()
 
         elif self.robot.is_incomplete():
+            print("item coordinates: ",event.pos())
             clicked_point = event.scenePos()
+            print("scene coordinates: ", clicked_point)
             scene = self.parent.get_scene()
             item = scene.itemAt(clicked_point, QtGui.QTransform())
+            print("clicked item type: ", type(item))
 
             if item == self:
                 menu = QtWidgets.QMenu(self.parent)
@@ -91,9 +94,6 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
 
            
                 menu.exec(event.screenPos())
-
-                print("set algorithm: ", self.robot.get_brain())
-                print("set location: ", event.screenPos())
 
             else:
                 return
