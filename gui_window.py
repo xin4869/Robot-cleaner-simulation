@@ -10,6 +10,7 @@ from square import Square
 from dirt import Dirt
 from brain import Brain
 from random_path import RandomPath
+from rules import Rules
 
 from gui_robot import GuiRobot
 
@@ -78,29 +79,11 @@ class GuiWindow(QtWidgets.QMainWindow):
 
     def init_rules_bt(self):
         self.button_rules = QtWidgets.QPushButton('Robot World Rules', self)
-        self.button_rules.clicked.connect(self.read_rules)  
+        self.button_rules.clicked.connect(self.read_rules)
 
     def read_rules(self):
-        info_box = QtWidgets.QMessageBox(self) ### set the main window as the parent for the message box
-        info_box.setWindowTitle("Robot World Rules")
-        info_box.setText("Click the button Initialize grid.\n "
-                         "Afterwards, click the buttons Place obstacles and Add Robot.\n "
-                        "When you are done, click the button Finalize World to confirm the set up.\n "
-                        "By clicking on the robots to reset them to their initial location, and as well as setting algorithms to run. \n "
-                        "Yello robots(incomplete): no algorithm has been set.\n"
-                        "Red robots awww"  )
+        info_box = Rules(self)
         info_box.exec()
-        # info_box = QtWidgets.QMessageBox.information(self, "Robot world rules", "Click the button Initialize grid.\n "
-        #                                              "Afterwards, click the buttons Place obstacles and Add Robot.\n "
-        #                                              "When you are done, click the button Finalize World to confirm the set up.\n ")
-        main_window_center = self.rect().center()
-        print(main_window_center)
-        info_box_center = info_box.rect().center()
-        print(info_box_center)
-
-        info_box.setGeometry(main_window_center.x(), main_window_center.y(), 10, 10)
-        
-        print(info_box_center)
         
     def init_world_bt(self):
         self.button_initworld = QtWidgets.QPushButton('Initialize grid', self)
