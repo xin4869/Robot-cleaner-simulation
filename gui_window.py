@@ -77,20 +77,30 @@ class GuiWindow(QtWidgets.QMainWindow):
     
     def get_scene(self):
         return self.scene
+    
+    def change_bt_color(self, button):
+        button.setStyleSheet("background-color: green")
+    
+    def change_bt_color_back(self, button):
+        button.setStyleSheet("")
+
 
     def init_rules_bt(self):
         self.button_rules = QtWidgets.QPushButton('Rules', self)
         self.button_rules.clicked.connect(self.read_rules)
+        self.button_rules.clicked.connect(self.change_bt_color, self.button_rules)
 
     def read_rules(self):
         info_box = Rules(self)
         info_box.exec()
         
+        self.change_bt_color_back(self.button_rules)
+        
     def init_world_bt(self):
         self.button_initworld = QtWidgets.QPushButton('Initialize grid', self)
         self.button_initworld.clicked.connect(self.create_world)
+        self.button_initworld.clicked.connect(self.change_bt_color, self.button_initworld)
         
-
     def create_world(self):
         # text,ok = QtWidgets.QInputDialog.getMultiLineText(self, 'Create Robot World', 'Enter world width dimension, eg.10:')
         # if ok:
@@ -142,7 +152,10 @@ class GuiWindow(QtWidgets.QMainWindow):
     def init_obs_bt(self):
         if self.grid_drawn:
             self.button_initobs = QtWidgets.QPushButton('Place obstacle', self)
+
             self.button_initobs.clicked.connect(self.add_obstacle)
+            self.button_initobs.clicked.connect(self.change_bt_color, self.button_initobs)
+
             self.button_layout.addWidget(self.button_initobs)
 
     def add_obstacle(self):
@@ -170,7 +183,10 @@ class GuiWindow(QtWidgets.QMainWindow):
     def init_bot_bt(self):
         if self.grid_drawn:
             self.button_initbot = QtWidgets.QPushButton('Add Robot', self)
+
             self.button_initbot.clicked.connect(self.add_to_world)
+            self.button_initbot.clicked.connect(self.change_bt_color, self.button_initbot)
+
             self.button_layout.addWidget(self.button_initbot)
 
 
@@ -179,12 +195,12 @@ class GuiWindow(QtWidgets.QMainWindow):
         name, ok = QtWidgets.QInputDialog.getText(self, 'Initialize Robot', 'Enter robot name:')
         if ok:
             while name in [robot.get_name() for robot in self.world.robots]:
-                response = QtWidgets.QMessageBox.warning(self, "Error", f"Robot {name} already exists in the world!")               
+                response = QtWidgets.QMessageBox.warning(self, "Error", f"Robot {name} has already been added!")               
                 name, ok = QtWidgets.QInputDialog.getText(self, 'Initialize Robot', 'Enter robot name:')
                 if not ok:
                     return     
             new_robot = Robot(name)      
-            
+
 
             direction, ok = QtWidgets.QInputDialog.getText(self, "Initialize robot direction", f"Which direction should Robot {name} face? Enter one of these: N, S, E, W (North, South, East, West).")       
             if ok:
@@ -279,13 +295,11 @@ class GuiWindow(QtWidgets.QMainWindow):
                                     clicked_square.set_robot(self.new_robot)                         
                                     
                                     self.draw_robots(self.new_robot)
-                                    
+
+                                    self.change_bt_color_back(self.button_initbot)                                  
                                     self.adding_robot = False            
 
                                     #QtWidgets.QMessageBox.information(self, "Set algorithm", f"Click on the Robot {self.new_robot.get_name()} to set an algorithm!") 
-
-                                else:
-                                    QtWidgets.QMessageBox.warning(self, "Error", f"Robot {self.new_robot.get_name()} already exists in the world! Please click Add Robot to add another robot!")
 
     # def setting_algorithm(self, robot):               
     #                 elif clicked_square.get_robot() is not None and clicked_square.get_robot().setting_algorithm():
@@ -316,7 +330,7 @@ class GuiWindow(QtWidgets.QMainWindow):
             if key == QtCore.Qt.Key.Key_W:
                 self.adding_obs = False
                 self.obs_bt_clicked = False
-    
+                self.change_bt_color_back(self.button_initobs)
                                      
     def draw_robots(self, robot):
         robot_gui = GuiRobot(robot, self.square_size, self)    #### making main window widget as parent of robot graphic item
@@ -328,7 +342,10 @@ class GuiWindow(QtWidgets.QMainWindow):
     
     def init_finalize_bt(self):
         self.button_finalize = QtWidgets.QPushButton('Finalize Robot World', self)
+
         self.button_finalize.clicked.connect(self.finalize_world)
+        self.button_finalize.clicked.connect(self.change_bt_color, self.button_finalize)
+      
         self.button_layout.addWidget(self.button_finalize)
 
     def finalize_world(self):
@@ -339,8 +356,6 @@ class GuiWindow(QtWidgets.QMainWindow):
 
             QtWidgets.QMessageBox.warning(self, "Error", "Please add at least one robot and three obstacles first!")
         else: 
-            self.world_finalized = True
-
             self.button_layout.removeWidget(self.button_initbot)
             self.button_initbot.deleteLater()
 
@@ -351,6 +366,8 @@ class GuiWindow(QtWidgets.QMainWindow):
             self.button_finalize.deleteLater()
 
             self.place_dirts()
+
+            self.world_finalized = True
 
     def place_dirts(self):
         if self.world_finalized:
