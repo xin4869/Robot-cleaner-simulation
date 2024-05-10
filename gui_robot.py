@@ -76,11 +76,12 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
             pass
     
     def mousePressEvent(self, event):
-        if self.robot.destroyed and not self.robot.is_complete():
+        if self.robot.destroyed and not self.robot.is_incomplete():
             self.robot.reset()
             event.accept()
 
-        elif self.robot.is_incomplete():
+        # elif self.robot.is_incomplete():
+        else:
             print("item coordinates: ",event.pos())
             clicked_point = event.scenePos()
             print("scene coordinates: ", clicked_point)
@@ -95,11 +96,11 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
                     action.triggered.connect(lambda checked, x = algorithm: self.setting_algorithm(x))
                     menu.addAction(action)
 
-           
+            
                 menu.exec(event.screenPos())
 
-            else:
-                return
+        # else:
+        #     return
 
 
 
