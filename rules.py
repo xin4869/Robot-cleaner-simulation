@@ -5,7 +5,7 @@ class Rules(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Robot World Rules")
-        self.setFixedSize(600, 800)
+        self.setFixedSize(600, 700)
         rule = QtWidgets.QTextEdit(self)
 
        
@@ -30,7 +30,7 @@ class Rules(QtWidgets.QDialog):
         rule.setFontFamily("Arial")
         rule.setHtml(text)
         # rule.setText(text)
-        rule.setFixedSize(600, 800)
+        rule.setFixedSize(600, 700)
         # rule.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
         document = rule.document()
