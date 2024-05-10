@@ -63,11 +63,12 @@ class GuiWindow(QtWidgets.QMainWindow):
 
     def init_window(self):
         self.setGeometry(1000, 500, 1200, 850)
+
         self.setWindowTitle('Robot World')
         self.show()
 
         self.scene = QtWidgets.QGraphicsScene()
-        self.scene.setSceneRect(0, 0, 1000, 900)
+        self.scene.setSceneRect(0, 0, 3000, 2000)
     
 
         self.view = QtWidgets.QGraphicsView(self.scene, self)
@@ -104,24 +105,28 @@ class GuiWindow(QtWidgets.QMainWindow):
         
         
     def create_world(self):
-        # text,ok = QtWidgets.QInputDialog.getMultiLineText(self, 'Create Robot World', 'Enter world width dimension, eg.10:')
+        # text,ok = QtWidgets.QInputDialog.getMultiLineText(self, 'Create Robot World', 'Enter world width dimension, Max: 20:')
         # if ok:
         #     if text == "":
         #         QtWidgets.QMessageBox.warning(self, "Error", "Please enter width dimensions!")
+        #         self.change_bt_color_back(self.button_initworld)
         #     elif text.isdigit() == False: 
         #         QtWidgets.QMessageBox.warning(self, "Error", "Please enter only numeric values!")
+        #         self.change_bt_color_back(self.button_initworld)
         #     else:
         #         width = int(text)
-        #         text,ok = QtWidgets.QInputDialog.getMultiLineText(self, 'Create Robot World', 'Enter world height dimension, eg.8:')
-        #         if ok:
+        #         text,ok = QtWidgets.QInputDialog.getMultiLineText(self, 'Create Robot World', 'Enter world height dimension, Max: 15')
+                # if ok:
         #             if text == "":
         #                 QtWidgets.QMessageBox.warning(self, "Error", "Please enter height dimensions!")
+        #                 self.change_bt_color_back(self.button_initworld)
         #             elif text.isdigit() == False: 
         #                 QtWidgets.QMessageBox.warning(self, "Error", "Please enter only numeric values!")
+        #                 self.change_bt_color_back(self.button_initworld)
         #             else:
         #                 height = int(text)
-                        width = 10
-                        height = 8
+                        width = 20
+                        height = 15
                         self.world = RobotWorld(width, height)
                         #QtWidgets.QMessageBox.information(self, "Success", "Robot World initialized successfully!")
                         # msg_box = QtWidgets.QMessageBox()
@@ -136,6 +141,10 @@ class GuiWindow(QtWidgets.QMainWindow):
 
                         self.button_layout.removeWidget(self.button_initworld)
                         self.button_initworld.deleteLater()
+                # else:
+                #     self.change_bt_color_back(self.button_initworld)
+            # else:
+            #     self.change_bt_color_back(self.button_initworld)
 
 
     def draw_grid(self):
@@ -150,6 +159,7 @@ class GuiWindow(QtWidgets.QMainWindow):
                 square_gui.setBrush(QtGui.QColor(255, 255, 255))
 
                 self.scene.addItem(square_gui)
+                self.adjustSize()
 
     def init_obs_bt(self):
         if self.grid_drawn:
