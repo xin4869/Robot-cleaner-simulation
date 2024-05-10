@@ -42,6 +42,7 @@ class GuiWindow(QtWidgets.QMainWindow):
 
         self.grid_drawn = False
         self.obs_added = False
+        self.obs_bt_clicked = False
         self.added_obs_amount = 0
         self.world_finalized = False
 
@@ -78,7 +79,7 @@ class GuiWindow(QtWidgets.QMainWindow):
         return self.scene
 
     def init_rules_bt(self):
-        self.button_rules = QtWidgets.QPushButton('Robot World Rules', self)
+        self.button_rules = QtWidgets.QPushButton('Rules', self)
         self.button_rules.clicked.connect(self.read_rules)
 
     def read_rules(self):
@@ -146,9 +147,10 @@ class GuiWindow(QtWidgets.QMainWindow):
 
     def add_obstacle(self):
         if self.grid_drawn:
-            QtWidgets.QMessageBox.information(self, "Add obstacle", "Please click on the square in which you want to place the obstacle.")
-            self.adding_obs = True
+            #QtWidgets.QMessageBox.information(self, "Add obstacle", "Please click on the square in which you want to place the obstacle.")
+            # self.adding_obs = True
             self.adding_robot = False
+            self.obs_bt_clicked = True
 
     def draw_obs(self, coordinates):
         if self.grid_drawn:
@@ -177,30 +179,21 @@ class GuiWindow(QtWidgets.QMainWindow):
         name, ok = QtWidgets.QInputDialog.getText(self, 'Initialize Robot', 'Enter robot name:')
         if ok:
             while name in [robot.get_name() for robot in self.world.robots]:
-                response = QtWidgets.QMessageBox.warning(self, "Error", f"Robot {name} already exists in the world!", QtWidgets.QMessageBox.Ok|QtWidgets.QMessageBox.Cancel)
-                
-                if response == QtWidgets.QMessageBox.Cancel:
-                    return
-                
+                response = QtWidgets.QMessageBox.warning(self, "Error", f"Robot {name} already exists in the world!")               
                 name, ok = QtWidgets.QInputDialog.getText(self, 'Initialize Robot', 'Enter robot name:')
                 if not ok:
-                    return
-        
+                    return     
             new_robot = Robot(name)      
+            
 
             direction, ok = QtWidgets.QInputDialog.getText(self, "Initialize robot direction", f"Which direction should Robot {name} face? Enter one of these: N, S, E, W (North, South, East, West).")       
             if ok:
                 while direction.lower() not in ["n", "s", "e", "w"]:
-                    response = QtWidgets.QMessageBox.warning(self, "Error", "Invalid direction! Please enter a valid direction.", QtWidgets.QMessageBox.Ok|QtWidgets.QMessageBox.Cancel)
-
-                    if response == QtWidgets.QMessageBox.Cancel:
-                        return
-                    
-                    direction, ok = QtWidgets.QInputDialog.getText(self, "Initialize robot direction", f"Which direction should Robot {name} face? Enter one of these: N, S, E, W")
-                    
+                    response = QtWidgets.QMessageBox.warning(self, "Error", "Invalid direction! Please enter a valid direction.")            
+                    direction, ok = QtWidgets.QInputDialog.getText(self, "Initialize robot direction", f"Which direction should Robot {name} face? Enter one of these: N, S, E, W")                 
                     if not ok:
                         return
-
+                    
                 if direction.lower() == "n":
                     new_robot.init_facing = Direction.north
                     new_robot.set_facing(Direction.north)    
@@ -217,7 +210,7 @@ class GuiWindow(QtWidgets.QMainWindow):
                 
                 self.new_robot = new_robot
 
-                QtWidgets.QMessageBox.information(self, "Initialize robot location", f"Click on square of the game grid where Robot {name} should be placed!")
+                #QtWidgets.QMessageBox.information(self, "Initialize robot location", f"Click on square of the game grid where Robot {name} should be placed!")
                 self.adding_robot = True
                 self.adding_obs = False
                 
@@ -266,7 +259,7 @@ class GuiWindow(QtWidgets.QMainWindow):
                                 clicked_square.set_wall()
                                 self.added_obs_amount += 1
                                 self.draw_obs(location)
-                                self.adding_obs = False
+                                # self.adding_obs = False
 
                     elif self.adding_robot:  ###### Flag of choosing robot location 
                         if self.new_robot is None:
@@ -289,7 +282,7 @@ class GuiWindow(QtWidgets.QMainWindow):
                                     
                                     self.adding_robot = False            
 
-                                    QtWidgets.QMessageBox.information(self, "Set algorithm", f"Click on the Robot {self.new_robot.get_name()} to set an algorithm!") 
+                                    #QtWidgets.QMessageBox.information(self, "Set algorithm", f"Click on the Robot {self.new_robot.get_name()} to set an algorithm!") 
 
                                 else:
                                     QtWidgets.QMessageBox.warning(self, "Error", f"Robot {self.new_robot.get_name()} already exists in the world! Please click Add Robot to add another robot!")
@@ -311,10 +304,20 @@ class GuiWindow(QtWidgets.QMainWindow):
     #                         else:
     #                             pass
                 
+    def keyPressEvent(self, event):
+        if self.obs_bt_clicked:
+            key = event.key()
+            if key == QtCore.Qt.Key.Key_W:
+                self.adding_obs = True
 
-                                   
-
-      
+    def keyReleaseEvent(self, event):
+        if self.obs_bt_clicked:
+            key = event.key()
+            if key == QtCore.Qt.Key.Key_W:
+                self.adding_obs = False
+                self.obs_bt_clicked = False
+    
+                                     
     def draw_robots(self, robot):
         robot_gui = GuiRobot(robot, self.square_size, self)    #### making main window widget as parent of robot graphic item
         self.added_robot_gui.append(robot_gui)

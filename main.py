@@ -3,7 +3,7 @@ import sys
 from PyQt6 import QtWidgets
 from coordinates import Coordinates
 from direction import Direction
-
+# 
 
 def main():
  

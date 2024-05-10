@@ -64,9 +64,6 @@ class Robot():
     
     def get_world(self):
         return self.world
-
-    def destroy(self):
-        self.destroyed = True
     
     def reset(self):
         self.destroyed = False
@@ -83,7 +80,7 @@ class Robot():
             return True
         
     def is_stuck(self):
-        if not self.is_broken() and not self.is_incomplete():
+        if not self.is_broken():
             world = self.get_world()
             current_location = self.get_location()
 
@@ -91,41 +88,29 @@ class Robot():
                 target_location = current_location.get_target_coordinates(direction, 1)  
                 target_square = world.get_square(target_location)
                 if target_square.is_empty():
-                    print("Robot functions normally!")
                     return False
-            
-            print("Robot is stuck!")
             return True        
                    
 
-    def handle_stuck(self):
-        if not self.is_stuck():
-            return False
-        
-        flag = 0
-        while self.is_stuck() and flag < 8:   
-            new_facing = Direction.get_next_counterclockwise(self.get_facing())
-            if not self.spin(new_facing):
-                raise Error("Robot is broken! Cannot be spun!")
-            else:
-                if self.move_forward():
-                    return True
-                flag += 1     
-            
-        self.destroy()
-        print("Action failed! Robot is broken!")
-        return False
-    
+    def destroy(self):
+        if self.is_stuck(): 
+            flag = 0
+            while flag < 8:
+                self.is_stuck()
+                flag += 1
+                if not self.is_stuck():
+                    return False
+                
+            self.destroyed = True
+            return True
 
     def is_broken(self):
         if self.destroyed or self.is_incomplete():
-            print ("Robot is destroyed!")
             return True   
         
         
     def spin(self, new_facing):
         if self.is_broken():
-            print("Robot is broken! Cannot be spun!")
             return False
         else:
             self.facing = new_facing
@@ -134,7 +119,6 @@ class Robot():
     
     def move(self, direction):
         if self.is_broken():
-            print("Robot is broken! Cannot move!")
             return False
         else:
             current_square = self.get_location_square()

@@ -45,9 +45,12 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
         if self.robot.destroyed:
             brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
             brush.setColor(QtGui.QColor(255, 0, 0))
+        elif self.robot.is_stuck():
+            brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
+            brush.setColor(QtGui.QColor(255, 221, 51))
         elif self.robot.is_incomplete():
             brush.setStyle(QtCore.Qt.BrushStyle.DiagCrossPattern)
-            brush.setColor(QtGui.QColor(255, 221, 51))
+            brush.setColor(QtGui.QColor(128, 128, 128))
         else:
             brush.setStyle(QtCore.Qt.BrushStyle.Dense4Pattern)
             brush.setColor(QtGui.QColor(180, 160, 210))
