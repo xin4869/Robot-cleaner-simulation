@@ -33,8 +33,8 @@ class Rules(QtWidgets.QDialog):
                     "4. Release the key only when you finish adding all obstacles. <p> "
 
                     "<h2 style='text-align:center;'>Robot colors</h2>"
-                    "<p style = 'font-size:16pt;'> 1. <strong>Purple</strong>: Functioning.<br><br>"
-                    " 2. <strong>Gray</strong> : No algorithm has been set.<br><br>"
+                    "<p style = 'font-size:16pt;'> 1. <strong>Gray</strong>: No algorithm has been set.<br><br>"
+                    " 2. <strong>Purple</strong> : All good.<br><br>"
                     " 3. <strong>Yellow</strong> : Stuck.<br><br>"
                     " 4. <strong>Red</strong>: Destroyed.<p>"
 
