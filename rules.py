@@ -30,12 +30,13 @@ class Rules(QtWidgets.QDialog):
                     "2. Hold down the key W. <br><br>"
                     "3. Click on the squares in which you want to place the obstacle.<br>"
                     "Note: You may not remove added obstacles.<br><br>"
-                    "4. Release the key when you finish. <p> "
+                    "4. Release the key only when you finish adding all obstacles. <p> "
 
                     "<h2 style='text-align:center;'>Robot colors</h2>"
-                    "<p style = 'font-size:16pt;'> 1. <strong>Purple</strong>: functioning.<br><br>"
-                    " 2. <strong>Yellow</strong> : no algorithm has been set.<br><br>"
-                    " 3. <strong>Red</strong>: Destroyed.<p>"
+                    "<p style = 'font-size:16pt;'> 1. <strong>Purple</strong>: Functioning.<br><br>"
+                    " 2. <strong>Gray</strong> : No algorithm has been set.<br><br>"
+                    " 3. <strong>Yellow</strong> : Stuck.<br><br>"
+                    " 4. <strong>Red</strong>: Destroyed.<p>"
 
                     "<h2 style = 'text-align:center;'>Algorithms</h2>"
                     "<p style = 'font-size:16pt;'>1. <strong>Random Path</strong>: The robot moves in random direction.<br><br>"
