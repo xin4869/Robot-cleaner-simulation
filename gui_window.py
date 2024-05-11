@@ -65,16 +65,14 @@ class GuiWindow(QtWidgets.QMainWindow):
         self.setGeometry(1000, 500, 1200, 850)
 
         self.setWindowTitle('Robot World')
-        self.show()
-
+        
         self.scene = QtWidgets.QGraphicsScene()
-        self.scene.setSceneRect(0, 0, 3000, 2000)
-    
+        # self.scene.setSceneRect(0, 0, 1200, 850)
 
         self.view = QtWidgets.QGraphicsView(self.scene, self)
-        self.view.adjustSize()
-        self.view.show()
         self.main_layout.addWidget(self.view)
+
+        self.show()
     
     def get_scene(self):
         return self.scene
@@ -125,8 +123,8 @@ class GuiWindow(QtWidgets.QMainWindow):
         #                 self.change_bt_color_back(self.button_initworld)
         #             else:
         #                 height = int(text)
-                        width = 20
-                        height = 15
+                        width = 10
+                        height = 8
                         self.world = RobotWorld(width, height)
                         #QtWidgets.QMessageBox.information(self, "Success", "Robot World initialized successfully!")
                         # msg_box = QtWidgets.QMessageBox()
@@ -158,8 +156,12 @@ class GuiWindow(QtWidgets.QMainWindow):
 
                 square_gui.setBrush(QtGui.QColor(255, 255, 255))
 
-                self.scene.addItem(square_gui)
-                self.adjustSize()
+                self.scene.addItem(square_gui)  
+                self.scene.setSceneRect(self.scene.itemsBoundingRect())
+                self.view.adjustSize()
+                self.view.show()
+                # self.adjustSize()
+
 
     def init_obs_bt(self):
         if self.grid_drawn:
@@ -380,10 +382,9 @@ class GuiWindow(QtWidgets.QMainWindow):
 
             self.button_layout.removeWidget(self.button_finalize)
             self.button_finalize.deleteLater()
-
-            self.place_dirts()
-
+            
             self.world_finalized = True
+            self.place_dirts()
 
     def place_dirts(self):
         if self.world_finalized:

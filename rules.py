@@ -10,7 +10,8 @@ class Rules(QtWidgets.QDialog):
 
        
         text = (    "<h1 style='text-align:center;'>Robot World Rules</h1>"
-                    "<p style='font-size:16pt;'>1. Click the button <u>Initialize grid</u>.<br><br>"
+                    "<p style='font-size:16pt;'>1. Click the button <u>Initialize grid</u>.<br>"
+                    "Note: Default window size is 10 x 8, but you may adjust the window size<br>according to the grid size.<br><br>"
                     "2.  Click on buttons <u>Place obstacle</u>, <u>Add Robot</u> to set walls and robots.<br>"
                     "Note: You need to add at least 1 robot and 3 obstacles to finalize the world.<br><br>"                   
                     "3.  Click the button <u>Finalize Robot World</u> to finish the set up.<br>"
