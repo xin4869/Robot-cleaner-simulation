@@ -13,9 +13,9 @@ class Rules(QtWidgets.QDialog):
                     "<p style='font-size:16pt;'>1. Click the button <u>Initialize grid</u>.<br>"
                     "Note: Default window size is 10 x 8, but you may adjust the window size<br>according to the grid size.<br><br>"
                     "2.  Click on buttons <u>Place obstacle</u>, <u>Add Robot</u> to set walls and robots.<br>"
-                    "Note: You need to add at least 1 robot and 3 obstacles to finalize the world.<br><br>"                   
+                    "Note: You need to add at least 1 robot, 3 obstacles and set algorithms for all robotsto finalize the world.<br><br>"                   
                     "3.  Click the button <u>Finalize Robot World</u> to finish the set up.<br>"
-                    "Note: Once you have finalized the set up, you cannot make changes.<br><br>"
+                    "Note: Once you have finalized the set up, you cannot make changes. However, you can always change algorithms.<br><br>"
                     "4. If the robot is destroyed(red), you may click on the robot to reset it.<br>"
                     "Note: A stuck robot will be destroyed after 8 failed attempts.<p>"
                     

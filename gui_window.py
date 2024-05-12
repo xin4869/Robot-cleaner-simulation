@@ -397,7 +397,7 @@ class GuiWindow(QtWidgets.QMainWindow):
 
     def place_dirts(self):
         if self.world_finalized:
-                num_dirts = random.randint(10, 50)
+                num_dirts = random.randint(4 * self.world.width, 5 * self.world.height)
                 for _ in range(num_dirts):
                     while True:
                         x = random.randint(0, self.world.width - 1)
