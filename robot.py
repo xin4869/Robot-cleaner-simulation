@@ -11,7 +11,7 @@ class Robot():
         self.facing = None
         self.brain = None
         self.destroyed = False
-
+        
         self.init_location = None
         self.init_facing = None
 

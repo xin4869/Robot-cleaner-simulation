@@ -365,6 +365,12 @@ class GuiWindow(QtWidgets.QMainWindow):
       
         self.button_layout.addWidget(self.button_finalize)
 
+    def algorithm_all_set(self):
+        for robot in self.world.robots:
+            if robot.get_brain() is None:
+                return False
+        return True
+
     def finalize_world(self):
         if not len(self.added_robot_gui) > 0 or self.added_obs_amount < 3:  
             ## either condition is true, warning message will be displayed  
@@ -372,6 +378,9 @@ class GuiWindow(QtWidgets.QMainWindow):
             ### else: error message
 
             QtWidgets.QMessageBox.warning(self, "Error", "Please add at least one robot and three obstacles first!")
+            self.change_bt_color_back(self.button_finalize)
+        elif not self.algorithm_all_set():
+            QtWidgets.QMessageBox.warning(self, "Error", "Please set algorithms for your robots!")
             self.change_bt_color_back(self.button_finalize)
         else: 
             self.button_layout.removeWidget(self.button_initbot)
@@ -388,7 +397,7 @@ class GuiWindow(QtWidgets.QMainWindow):
 
     def place_dirts(self):
         if self.world_finalized:
-                num_dirts = random.randint(10, 100)
+                num_dirts = random.randint(10, 50)
                 for _ in range(num_dirts):
                     while True:
                         x = random.randint(0, self.world.width - 1)
