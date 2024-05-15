@@ -8,7 +8,7 @@ from direction import Direction
 def main():
  
     app = QtWidgets.QApplication(sys.argv)
-    window1 = GuiWindow(100)
+    GuiWindow(100)
 
     sys.exit(app.exec())
     

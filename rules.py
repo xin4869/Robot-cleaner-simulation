@@ -17,7 +17,7 @@ class Rules(QtWidgets.QDialog):
                     "3.  Click the button <u>Finalize Robot World</u> to finish the set up.<br>"
                     "Note: Once you have finalized the set up, you cannot make changes. However, you can always change algorithms.<br><br>"
                     "4. If the robot is destroyed(red), you may click on the robot to reset it.<br>"
-                    "Note: A stuck robot will be destroyed after 8 failed attempts.<p>"
+                    "Note: A stuck robot will be destroyed after 6 failed attempts to move.<p>"
                     
 
                      "<h2 style = 'text-align:center;'>Add robot</h2>"
@@ -36,7 +36,8 @@ class Rules(QtWidgets.QDialog):
                     "<p style = 'font-size:16pt;'> 1. <strong>Gray</strong>: No algorithm has been set.<br><br>"
                     " 2. <strong>Purple</strong> : All good.<br><br>"
                     " 3. <strong>Yellow</strong> : Stuck.<br><br>"
-                    " 4. <strong>Red</strong>: Destroyed.<p>"
+                    " 4. <strong>Soft Red</strong> : Battery low.<br><br>"
+                    " 5. <strong>Red</strong>: Destroyed.<p>"
 
                     "<h2 style = 'text-align:center;'>Algorithms</h2>"
                     "<p style = 'font-size:16pt;'>1. <strong>Random Path</strong>: The robot moves in random direction.<br><br>"

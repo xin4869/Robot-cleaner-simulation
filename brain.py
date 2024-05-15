@@ -5,9 +5,12 @@ class Brain(Robot):
     def __init__(self, body):
         self.body = body
     
-    
     def move_body(self):
         pass  
+ 
+    def go_home(self):
+        #self.body.move(self.home_direction())
+        pass
 
-    def sensor(self):
+    def home_direction(self):
         pass

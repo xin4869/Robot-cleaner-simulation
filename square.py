@@ -1,9 +1,9 @@
 class Square():
     def __init__(self):
         self.robot = None
-        self.dirts_per_square = []
         self.wall_flag = False
-
+        
+        self.gui = None
     def get_robot(self):
         return self.robot
     
@@ -19,7 +19,13 @@ class Square():
                 return False
             else:
                 return True
+        
     
+    def set_gui(self, gui):
+        self.gui = gui
+    
+    def get_gui(self):
+        return self.gui
     
     def set_wall(self):
         if self.is_empty():

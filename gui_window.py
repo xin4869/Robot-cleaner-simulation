@@ -11,6 +11,7 @@ from dirt import Dirt
 from brain import Brain
 from random_path import RandomPath
 from rules import Rules
+from setting import Setting
 
 from gui_robot import GuiRobot
 
@@ -125,7 +126,7 @@ class GuiWindow(QtWidgets.QMainWindow):
         #                 height = int(text)
                         width = 10
                         height = 8
-                        self.world = RobotWorld(width, height)
+                        self.world = RobotWorld(width, height, self.scene)
                         #QtWidgets.QMessageBox.information(self, "Success", "Robot World initialized successfully!")
                         # msg_box = QtWidgets.QMessageBox()
                         # msg_box.setText("Robot World initialized successfully!")
@@ -147,13 +148,12 @@ class GuiWindow(QtWidgets.QMainWindow):
 
     def draw_grid(self):
         for y in range(self.world.get_height()):
-            for x in range(self.world.get_width()):              
+            for x in range(self.world.get_width()):     
+                square = self.world.get_square(Coordinates(x, y))         
                 x_gui = x * self.square_size
                 y_gui = y * self.square_size
                 square_gui = QtWidgets.QGraphicsRectItem(x_gui, y_gui, self.square_size, self.square_size)
-
-                square = self.world.get_square(Coordinates(x, y))    
-
+                square.set_gui(square_gui)
                 square_gui.setBrush(QtGui.QColor(255, 255, 255))
 
                 self.scene.addItem(square_gui)  
@@ -161,7 +161,6 @@ class GuiWindow(QtWidgets.QMainWindow):
                 self.view.adjustSize()
                 self.view.show()
                 # self.adjustSize()
-
 
     def init_obs_bt(self):
         if self.grid_drawn:
@@ -182,16 +181,17 @@ class GuiWindow(QtWidgets.QMainWindow):
         if self.grid_drawn:
             square = self.world.get_square(coordinates)
             if square.is_wall(): 
-                x_gui = coordinates.get_x() * self.square_size
-                y_gui = coordinates.get_y() * self.square_size
+                # x_gui = coordinates.get_x() * self.square_size
+                # y_gui = coordinates.get_y() * self.square_size
+                # obs_gui = QtWidgets.QGraphicsRectItem(x_gui, y_gui, self.square_size, self.square_size)
+                gui = square.get_gui()
+                current_brush = gui.brush()
+                current_brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
+                current_brush.setColor(QtGui.QColor(230, 230, 230))
+                gui.setBrush(current_brush)
+                self.scene.update()
 
-                square_gui = QtWidgets.QGraphicsRectItem(x_gui, y_gui, self.square_size, self.square_size)
-                
-                brush = QtGui.QBrush(QtCore.Qt.BrushStyle.Dense3Pattern)   ####### what are QtGui, QtCore, and Qt? Difference?
-                brush.setColor(QtGui.QColor(0, 0, 0))
-                square_gui.setBrush(brush)
-
-                self.scene.addItem(square_gui)
+                # self.scene.addItem(obs_gui)
 
     def init_bot_bt(self):
         if self.grid_drawn:
@@ -260,10 +260,10 @@ class GuiWindow(QtWidgets.QMainWindow):
 
         scene_pos = self.view.mapToScene(event.pos())
         # test = event.scenePos()
-        test_2 = event.pos()
+        # test_2 = event.pos()
 
-        print("widget_pos?viewport? event.pos(): ", test_2)
-        print("event.pos() mapped to scene coordinates: ", scene_pos)
+        # print("widget_pos?viewport? event.pos(): ", test_2)
+        # print("event.pos() mapped to scene coordinates: ", scene_pos)
       
         pixel_x = scene_pos.x() - 182
         pixel_y = scene_pos.y() - 15
@@ -273,8 +273,8 @@ class GuiWindow(QtWidgets.QMainWindow):
         
         location = Coordinates(self.clicked_x, self.clicked_y)
 
-        print(f"Clicked on square ({self.clicked_x}, {self.clicked_y})")
-        print(f"event.pos() mapped scene coordinates - 182: {pixel_x} | event.pos() mapped scene coordinates - 15: {pixel_y}")
+        # print(f"Clicked on square ({self.clicked_x}, {self.clicked_y})")
+        # print(f"event.pos() mapped scene coordinates - 182: {pixel_x} | event.pos() mapped scene coordinates - 15: {pixel_y}")
 
 
         if self.grid_drawn:
@@ -317,8 +317,8 @@ class GuiWindow(QtWidgets.QMainWindow):
 
                                     #QtWidgets.QMessageBox.information(self, "Set algorithm", f"Click on the Robot {self.new_robot.get_name()} to set an algorithm!") 
 
-    # def setting_algorithm(self, robot):               
-    #                 elif clicked_square.get_robot() is not None and clicked_square.get_robot().setting_algorithm():
+    # def start_algorithm(self, robot):               
+    #                 elif clicked_square.get_robot() is not None and clicked_square.get_robot().start_algorithm():
                         
     #                     clicked_robot = clicked_square.get_robot()
     #                     algorithm, ok = QtWidgets.QInputDialog.getItem(self, "Set Algorithm", "Choose an algorithm:", Brain.algorithms, 0, False)
@@ -395,6 +395,8 @@ class GuiWindow(QtWidgets.QMainWindow):
             self.world_finalized = True
             self.place_dirts()
 
+            self.init_start_bt()
+
     def place_dirts(self):
         if self.world_finalized:
                 num_dirts = random.randint(4 * self.world.width, 5 * self.world.height)
@@ -408,20 +410,24 @@ class GuiWindow(QtWidgets.QMainWindow):
                             break
                     
                     dirt = Dirt(x, y, 5)
-                    square.dirts_per_square.append(dirt)
                     self.world.dirts.append(dirt)   #### logical dirt added
 
                     dirt.draw_dirt(self.scene, self.square_size)  #### gui dirt added
-                     
-    def remove_dirts(self, dirt):  #### remove gui dirt from the window/screen right away when remove_dirts() is called
 
-        self.scene.removeItem(dirt.get_dirt_gui())
+    def init_start_bt(self):
+        self.button_start = QtWidgets.QPushButton('Start cleaning', self)
+        self.button_start.clicked.connect(lambda: self.change_bt_color(self.button_start))
+        self.button_start.clicked.connect(self.setting_input)
+        self.button_layout.addWidget(self.button_start)
 
-        square = self.world.get_square(dirt.get_location())   ##### removing logical dirt
-        square.dirts_per_square.remove(dirt)
-        self.world.dirts.remove(dirt)
+    def setting_input(self):
+        
+        # setting_dialog = Setting(self)
+        # if self.world.clean_level_target and self.world.room_coverage_taget:
+        
+        self.world.start_cleaning()     
 
-
+     
     def get_gui_robots(self):
         return self.added_robot_gui
     
@@ -429,15 +435,3 @@ class GuiWindow(QtWidgets.QMainWindow):
         for robot_gui in self.added_robot_gui:
             robot_gui.update()
 
-
-
-
-
-                
-  
-
-
-
-
-
-                

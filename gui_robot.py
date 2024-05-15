@@ -45,6 +45,9 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
         if self.robot.destroyed:
             brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
             brush.setColor(QtGui.QColor(255, 0, 0))
+        elif 0 < self.robot.battery <= 100:
+            brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
+            brush.setColor(QtGui.QColor(255, 150, 150))
         elif self.robot.is_stuck():
             brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
             brush.setColor(QtGui.QColor(255, 221, 51))
@@ -82,12 +85,12 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
 
         # elif self.robot.is_incomplete():
         else:
-            print("item coordinates: ",event.pos())
+            # print("item coordinates: ",event.pos())
             clicked_point = event.scenePos()
-            print("scene coordinates: ", clicked_point)
+            # print("scene coordinates: ", clicked_point)
             scene = self.parent.get_scene()
             item = scene.itemAt(clicked_point, QtGui.QTransform())
-            print("clicked item type: ", type(item))
+            # print("clicked item type: ", type(item))
 
             if item == self:
                 menu = QtWidgets.QMenu(self.parent)
