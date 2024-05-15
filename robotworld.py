@@ -1,5 +1,6 @@
 from square import Square
 from collections import Counter
+from PyQt6 import QtCore
 
 class RobotWorld:
     def __init__(self, width, height, scene=None):
@@ -21,7 +22,6 @@ class RobotWorld:
   
         # self.total_visited_squares_list = []
         self.total_visited_squares = set()
-
 
 
     def get_width(self):
@@ -115,41 +115,16 @@ class RobotWorld:
   
     def take_turn(self):
         if self.get_number_of_robots() > 0:
-            print(f"take_turn() called, current robot going to take a turn has turn number  {self.turn}")
             current = self.robots[self.turn]
             if current is not None:
                 if not current.destroyed:
                     current.act()
-                    print("robot act() has been called")
                 else:
                     if current not in self.destroyed_robots:
                         self.destroyed_robots.append(current)
                 self.turn = (self.turn + 1) % self.get_number_of_robots()
-                print(f"turn number has been added 1, now it is {self.turn}")
 
-    def take_turn_all(self):
-        for _ in range(self.get_number_of_robots()):
-            print(f"{_}th (take_turn) in range (len(world.robots)):{len(self.robots)}")
-            self.take_turn()
-
-
-    def start_cleaning(self):
-        room_coverage = self.get_room_coverage()
-        clean_level = self.get_clean_level()
-        #### test 
-        print("room coverage: ", room_coverage)
-        print("clean level: ", clean_level)
-        self.take_turn_all()
-        #### test
-
-        # while room_coverage < self.room_coverage_taget or clean_level < self.clean_level_target:
-        #     self.take_turn_all()
-        #     if len(self.destroyed_robots) == len(self.robots):
-        #         break
-            
-
-            
-
+  
 
 
         

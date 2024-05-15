@@ -57,9 +57,12 @@ class GuiWindow(QtWidgets.QMainWindow):
 
         self.init_window()
 
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.update_gui_robots)
-        self.timer.start(10)
+        self.timer1 = QtCore.QTimer()
+        self.timer1.timeout.connect(self.update_gui_robots)
+        self.timer1.start(10)
+        
+        self.timer2 = QtCore.QTimer()
+        self.timer2.timeout.connect(self.take_turn_all)
         
 
     def init_window(self):
@@ -80,6 +83,9 @@ class GuiWindow(QtWidgets.QMainWindow):
     
     def change_bt_color(self, button):
         button.setStyleSheet("background-color: green")
+    
+    def change_bt_color_red(self, button):
+        button.setStyleSheet("background-color: red")
     
     def change_bt_color_back(self, button):
         button.setStyleSheet("")
@@ -407,15 +413,64 @@ class GuiWindow(QtWidgets.QMainWindow):
     def setting_input(self):       
         Setting(self)
         if self.world.clean_level_target and self.world.room_coverage_taget:     
+            self.button_layout.removeWidget(self.button_setting)
+            self.button_setting.deleteLater()
             self.init_start_bt()
+            self.init_pause_bt()
 
     def init_start_bt(self):
         self.button_start = QtWidgets.QPushButton('Start cleaning', self)
-        self.button_start.clicked.connect(lambda: self.change_bt_color(self.button_start))
-        self.button_start.released.connect(lambda:self.change_bt_color_back(self.button_start))
-        self.button_start.clicked.connect(self.world.start_cleaning)
+
+        self.button_start.pressed.connect(lambda: self.change_bt_color(self.button_start))
+        self.button_start.released.connect(lambda: self.change_bt_color_back(self.button_start))
+
+        self.button_start.clicked.connect(self.start_cleaning)
         self.button_layout.addWidget(self.button_start)
         
+    def start_cleaning(self):     
+        self.timer2.start(60)
+        self.take_turn_all()
+        self.change_bt_color_back(self.button_start) 
+        # self.button_layout.removeWidget(self.button_start)
+        # self.button_start.deleteLater()
+        
+    
+    def init_pause_bt(self):
+        self.button_pause = QtWidgets.QPushButton('Pause cleaning', self)
+
+        self.button_pause.pressed.connect(lambda: self.change_bt_color_red(self.button_pause))
+        self.button_pause.released.connect(lambda: self.change_bt_color_back(self.button_pause))
+
+        self.button_pause.clicked.connect(self.pause_cleaning)
+        self.button_layout.addWidget(self.button_pause)
+
+    def pause_cleaning(self):
+        self.timer2.stop()
+        # self.button_layout.removeWidget(self.button_pause)
+        # self.button_pause.deleteLater()
+        
+
+    def show_notice(self):
+        notice = QtWidgets.QMessageBox()
+        notice.setWindowTitle("Success!")
+        notice.setText(f"Cleaning target achieved!\nRoom coverage: {self.world.get_room_coverage()} \nClean level: {self.world.get_clean_level()}")
+        notice.exec()
+
+    def take_turn_all(self):
+        for _ in range(self.world.get_number_of_robots()):
+            self.world.take_turn()
+
+        if len(self.world.destroyed_robots) == len(self.world.robots):
+            self.timer2.stop()
+            QtWidgets.QMessageBox.warning(self, "Error", "All robots have been destroyed! Cleaning task failed!")
+            return
+        
+        room_coverage = self.world.get_room_coverage()
+        clean_level = self.world.get_clean_level()
+        if room_coverage >= self.world.room_coverage_taget and clean_level >= self.world.clean_level_target:
+            self.timer2.stop()
+            self.show_notice()
+            return
      
     def get_gui_robots(self):
         return self.added_robot_gui
