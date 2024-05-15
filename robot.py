@@ -15,16 +15,14 @@ class Robot():
         self.battery = 1000
 
         self.destroyed = False
+        self.is_really_stuck = False
+        self.stuck_flag = 0
  
         self.init_location = None
         self.init_facing = None
-
-        self.exit_direction = None
-        self.stuck_flag = 0
+    
         self.visited_squares = []
       
-
-        # self.setting_algorithm = False
 
         
     def set_name(self, name):
@@ -57,15 +55,18 @@ class Robot():
     def get_facing(self):
         return self.facing
     
-    def set_world(self, world, location, facing):
-        target_square = world.get_square(location)
-        if target_square.is_empty and self.world is None:
-            self.world = world
-            self.location = location
-            self.facing = facing
-            return True
-        else:
-            return False
+    # def set_world(self, world, location, facing):
+    #     target_square = world.get_square(location)
+    #     if target_square.is_empty and self.world is None:
+    #         self.world = world
+    #         self.location = location
+    #         self.facing = facing
+    #         return True
+    #     else:
+    #         return False
+
+    def set_world(self, world):
+        self.world = world
     
     def get_world(self):
         return self.world
@@ -77,6 +78,7 @@ class Robot():
 
         self.world.get_square(self.location).remove_robot()
         self.world.get_square(self.init_location).set_robot()
+        self.world.destroyed_robots.remove(self)
         
     def is_incomplete(self):
         if self.brain is None or self.world is None:
@@ -86,18 +88,7 @@ class Robot():
 
         
     def is_stuck(self):
-        if not self.is_broken():
-            world = self.get_world()
-            current_location = self.get_location()
-
-            for direction in Direction.direction_list:        
-                target_location = current_location.get_target_coordinates(direction, 1)  
-                target_square = world.get_square(target_location)
-                if target_square.is_empty():
-                    self.exit_direction = direction
-                    return False
-            return True
-               
+        return self.is_really_stuck
                    
 
     def is_broken(self):
@@ -105,26 +96,31 @@ class Robot():
             return True   
         
         
-    def spin(self, new_facing):
-        if self.is_broken():
-            return False
-        else:
-            self.facing = new_facing
-            return True
+    def spin(self, direction):
+        self.facing = direction
 
     def clean(self):
         current_square = self.world.get_square(self.location)
         target_dirts = self.world.get_target_dirts(self.location)
         total = len(target_dirts)
+        print("current square total dirts:", total)
+
         if total > 0: 
             if self.mode == 0:
-                num_to_remove = random.randint(1, 3)
+                num_to_remove = random.randint(0, 1)
             elif self.mode == 1:
                 self.battery -= 1     #####  strong mode - consume 1 battery more per move
-                num_to_remove = random.randint(2, 4)
+                num_to_remove = random.randint(0, 2)
+            print("num_to_remove:", num_to_remove)
+
+            if num_to_remove > total:
+                num_to_remove = total
 
             for _ in range(num_to_remove):
-                removed_dirt = target_dirts.pop(random.randint(0, len(target_dirts) - 1))
+                if len(target_dirts) > 1:
+                    removed_dirt = target_dirts.pop(random.randint(0, len(target_dirts) - 1))
+                else:
+                    removed_dirt = target_dirts.pop(0)
                 self.world.dirts.remove(removed_dirt)
                 self.world.scene.removeItem(removed_dirt.get_dirt_gui())
                 self.world.scene.update()        ########## UPDATE SCENE?????
@@ -143,71 +139,41 @@ class Robot():
                 self.world.cleaned_squares.append(current_square)
 
 
-    def move(self, direction):
-        if self.is_broken():
-            return False
-        else:
-            self.spin(direction)
-            current_square = self.get_location_square()
-
-            target_location = self.get_location().get_target_coordinates(direction, 1)
-            target_square = self.get_world().get_square(target_location)
-            
-            if target_square.is_empty():
-                self.location = target_location
-                target_square.set_robot(self)  
-                target_square_gui = target_square.get_gui()
-                current_brush = target_square_gui.brush()
-                current_color = target_square_gui.brush().color()
-
-                if target_square not in self.visited_squares:                  
-                    new_color = QtGui.QColor(230, 230, 230)         ########## first time visit - change to purple
-                else:
-                    intensity = min(current_color.alpha() + 20, 255)
-                    new_color = QtGui.QColor(current_color.red(), current_color.green(), current_color.blue(), intensity)
-
-                current_brush.setColor(QtGui.QColor(new_color))
-                target_square_gui.setBrush(current_brush)
-                self.world.scene.update()        ########    update scene  ????
-
-                self.visited_squares.append(target_square)
-                current_square.remove_robot()
-                self.clean()
-                return True
-            else:
-                # if self.is_stuck():
-                #     self.destroy()                          
-                # if self.exit_direction is not None:  
-                if not self.is_stuck():                 
-                    current_square.remove_robot()
-                    self.spin(self.exit_direction)
-                    exit_location = self.get_location().get_target_coordinates(self.exit_direction, 1)
-                    self.location = exit_location
-                    exit_square = self.get_world().get_square(exit_location)
-                    exit_square.set_robot(self)
-                    
-                else:                                           
-                    self.stuck_flag += 1
-                    if self.stuck_flag > 5:
-                        self.destroyed = True
-                      
-            
-    def move_forward(self):
-        return self.move(self.get_facing())
+    def move(self):
+    
+        current_square = self.get_location_square()
+        target_location = self.get_location().get_target_coordinates(self.get_facing(), 1)
+        target_square = self.get_world().get_square(target_location)
+        
+        self.location = target_location
+        current_square.remove_robot()
+        target_square.set_robot(self)
+        self.visited_squares.append(target_square)  
+        self.clean()
     
 
+        target_square_gui = target_square.get_gui()
+        current_brush = target_square_gui.brush()
+        current_color = target_square_gui.brush().color()
+        intensity = max(current_color.alpha() - 15, 140)
+        new_color = QtGui.QColor(current_color.red(), current_color.green(), current_color.blue(), intensity)       
+        current_brush.setColor(QtGui.QColor(new_color))
+        target_square_gui.setBrush(current_brush)
+        self.world.scene.update()        ########    update scene  ????
+
+
     def act(self):
-            if not self.is_broken():
-                if self.battery > 100:
-                    self.battery -= 1
-                    self.brain.move_body()
-                    self.world.scene.update()
-                elif 0 < self.battery <= 100:
-                    self.battery -= 1
-                    self.brain.go_home()
-                    self.world.scene.update()
-                else:
-                    self.destroyed = True
+        if self.battery > 100:
+            self.battery -= 1
+            self.brain.find_direction()
+        # elif 0 < self.battery <= 100:
+        #     self.battery -= 1
+        #     self.brain.find_direction_home()
+        #     self.world.scene.update()
+        else:
+            self.destroyed = True
+
+        
 
 
             

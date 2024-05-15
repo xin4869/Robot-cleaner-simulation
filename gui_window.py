@@ -187,7 +187,7 @@ class GuiWindow(QtWidgets.QMainWindow):
                 gui = square.get_gui()
                 current_brush = gui.brush()
                 current_brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
-                current_brush.setColor(QtGui.QColor(230, 230, 230))
+                current_brush.setColor(QtGui.QColor(200, 200, 200))
                 gui.setBrush(current_brush)
                 self.scene.update()
 
@@ -291,7 +291,6 @@ class GuiWindow(QtWidgets.QMainWindow):
                             clicked_square.set_wall()
                             self.added_obs_amount += 1
                             self.draw_obs(location)
-                            # self.adding_obs = False
 
                 elif self.adding_robot:  ###### Flag of choosing robot location 
                     if self.new_robot is None:
@@ -305,8 +304,10 @@ class GuiWindow(QtWidgets.QMainWindow):
                         else:
                             self.new_robot.init_location = location
                             self.new_robot.set_location(location)
+                            self.new_robot.set_world(self.world)
                             if self.new_robot not in self.world.robots:
-                                self.world.add_robot(self.new_robot, location, self.new_robot.get_facing())   
+                                # self.world.add_robot(self.new_robot, location, self.new_robot.get_facing())  
+                                
                                 self.world.robots.append(self.new_robot)
                                 clicked_square.set_robot(self.new_robot)                         
                                 
@@ -315,24 +316,7 @@ class GuiWindow(QtWidgets.QMainWindow):
                                 self.change_bt_color_back(self.button_initbot)                                  
                                 self.adding_robot = False            
 
-                                    #QtWidgets.QMessageBox.information(self, "Set algorithm", f"Click on the Robot {self.new_robot.get_name()} to set an algorithm!") 
 
-    # def start_algorithm(self, robot):               
-    #                 elif clicked_square.get_robot() is not None and clicked_square.get_robot().start_algorithm():
-                        
-    #                     clicked_robot = clicked_square.get_robot()
-    #                     algorithm, ok = QtWidgets.QInputDialog.getItem(self, "Set Algorithm", "Choose an algorithm:", Brain.algorithms, 0, False)
-    #                     if ok:
-    #                         if algorithm == "Random Path":
-    #                             brain = RandomPath(clicked_robot)
-    #                             clicked_robot.set_brain(brain)
-                            
-    #                         elif algorithm == "A* Path":
-    #                             pass
-    #                         elif algorithm == "Greedy Path":
-    #                             pass
-    #                         else:
-    #                             pass
                 
     def keyPressEvent(self, event):
         if self.obs_bt_clicked:
@@ -395,7 +379,7 @@ class GuiWindow(QtWidgets.QMainWindow):
             self.world_finalized = True
             self.place_dirts()
 
-            self.init_start_bt()
+            self.init_setting_bt()
 
     def place_dirts(self):
         if self.world_finalized:
@@ -414,19 +398,24 @@ class GuiWindow(QtWidgets.QMainWindow):
 
                     dirt.draw_dirt(self.scene, self.square_size)  #### gui dirt added
 
+    def init_setting_bt(self):
+        self.button_setting = QtWidgets.QPushButton('Set up cleaning', self)
+        self.button_setting.clicked.connect(lambda: self.change_bt_color(self.button_setting))
+        self.button_setting.clicked.connect(self.setting_input)
+        self.button_layout.addWidget(self.button_setting)
+
+    def setting_input(self):       
+        Setting(self)
+        if self.world.clean_level_target and self.world.room_coverage_taget:     
+            self.init_start_bt()
+
     def init_start_bt(self):
         self.button_start = QtWidgets.QPushButton('Start cleaning', self)
         self.button_start.clicked.connect(lambda: self.change_bt_color(self.button_start))
-        self.button_start.clicked.connect(self.setting_input)
+        self.button_start.released.connect(lambda:self.change_bt_color_back(self.button_start))
+        self.button_start.clicked.connect(self.world.start_cleaning)
         self.button_layout.addWidget(self.button_start)
-
-    def setting_input(self):
         
-        # setting_dialog = Setting(self)
-        # if self.world.clean_level_target and self.world.room_coverage_taget:
-        
-        self.world.start_cleaning()     
-
      
     def get_gui_robots(self):
         return self.added_robot_gui

@@ -13,6 +13,11 @@ class Coordinates():
     
     def get_target_coordinates(self, new_direction, distance):
         return Coordinates(self.x + new_direction[0] * distance, self.y + new_direction[1] * distance)
+    
+    def is_equal(self, other):
+        if isinstance (other, Coordinates):
+            return self.x == other.x and self.y == other.y
+        return False
 
 
     def __str__(self):

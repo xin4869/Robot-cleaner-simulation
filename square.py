@@ -1,7 +1,7 @@
 class Square():
-    def __init__(self):
+    def __init__(self, wall_flag = False):
         self.robot = None
-        self.wall_flag = False
+        self.wall_flag = wall_flag
         
         self.gui = None
     def get_robot(self):
@@ -12,13 +12,7 @@ class Square():
     
 
     def is_empty(self):
-        if self.is_wall():
-            return False
-        else:
-            if self.robot is not None:
-                return False
-            else:
-                return True
+        return self.robot is None and not self.is_wall()
         
     
     def set_gui(self, gui):
@@ -35,12 +29,12 @@ class Square():
             return False
         
     
-    def remove_wall(self):
-        if self.is_wall():
-            self.wall_flag = False
-            return True
-        else:
-            return False
+    # def remove_wall(self):
+    #     if self.is_wall():
+    #         self.wall_flag = False
+    #         return True
+    #     else:
+    #         return False
     
     def set_robot(self, robot):
         if self.is_empty():

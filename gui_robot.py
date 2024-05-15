@@ -48,7 +48,7 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
         elif 0 < self.robot.battery <= 100:
             brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
             brush.setColor(QtGui.QColor(255, 150, 150))
-        elif self.robot.is_stuck():
+        elif self.robot.is_really_stuck:
             brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
             brush.setColor(QtGui.QColor(255, 221, 51))
         elif self.robot.is_incomplete():

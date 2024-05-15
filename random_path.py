@@ -5,20 +5,29 @@ class RandomPath(Brain):
     def __init__(self, body):
         super().__init__(body)
 
-    def move_body(self):     
-        direction = self.determine_direction()
-        current_location = self.body.get_location()
-        target_location = current_location.get_target_coordinates(direction, 1)
-        while not self.body.get_world().contains(target_location):
-            direction = Direction.random_direction()
-        self.body.move(direction)  
-
-    def determine_direction(self):
-        direction = Direction.random_direction()
-        current_location = self.body.get_location()
-
-        return direction
+    def find_direction(self):      
+        if not self.body.is_broken():
+            direction = Direction.random_direction()          
+            if self.square_is_free(direction):
+                self.body.stuck_flag = 0
+                self.body.is_really_stuck = False
+                self.body.spin(direction)
+                self.body.move()
+            else:
+                for direction in Direction.direction_list:
+                    print(direction)
+                    self.body.spin(direction)
+                    if self.square_is_free(direction):
+                        self.body.stuck_flag = 0
+                        self.body.is_really_stuck = False
+                        self.body.move()
+                        return
+                
+                self.body.is_really_stuck = True
+                self.body.stuck_flag += 1
+                print(self.body.stuck_flag)
+                if self.body.stuck_flag > 15:
+                    self.body.destroyed = True
 
         
 
-        #### if stuck:  ?????

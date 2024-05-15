@@ -65,12 +65,12 @@ class Setting(QtWidgets.QDialog):
         self.buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
         
         self.buttons.accepted.connect(self.get_values)
-        self.buttons.accepted.connect(lambda: self.parent.change_bt_color_back(self.parent.button_start))
+        self.buttons.accepted.connect(lambda: self.parent.change_bt_color_back(self.parent.button_setting))
         self.buttons.accepted.connect(self.accept)
         
 
         self.buttons.rejected.connect(self.reject)
-        self.buttons.rejected.connect(lambda: self.parent.change_bt_color_back(self.parent.button_start))
+        self.buttons.rejected.connect(lambda: self.parent.change_bt_color_back(self.parent.button_setting))
         
         self.layout.addWidget(self.buttons)
 
