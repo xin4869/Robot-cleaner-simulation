@@ -50,6 +50,8 @@ class GuiWindow(QtWidgets.QMainWindow):
         self.adding_robot = False
         self.adding_obs = False
 
+        self.start_pause_flag = False
+
         self.clicked_x = None
         self.clicked_y = None
 
@@ -410,13 +412,14 @@ class GuiWindow(QtWidgets.QMainWindow):
         self.button_setting.clicked.connect(self.setting_input)
         self.button_layout.addWidget(self.button_setting)
 
+
     def setting_input(self):       
         Setting(self)
-        if self.world.clean_level_target and self.world.room_coverage_taget:     
-            self.button_layout.removeWidget(self.button_setting)
-            self.button_setting.deleteLater()
-            self.init_start_bt()
-            self.init_pause_bt()
+        if self.world.clean_level_target and self.world.room_coverage_taget:    
+            if not self.start_pause_flag: 
+                self.init_start_bt()
+                self.init_pause_bt()
+                self.start_pause_flag = True
 
     def init_start_bt(self):
         self.button_start = QtWidgets.QPushButton('Start cleaning', self)
@@ -462,7 +465,7 @@ class GuiWindow(QtWidgets.QMainWindow):
 
         if len(self.world.destroyed_robots) == len(self.world.robots):
             self.timer2.stop()
-            QtWidgets.QMessageBox.warning(self, "Error", "All robots have been destroyed! Cleaning task failed!")
+            QtWidgets.QMessageBox.warning(self, "Error!", "All robots have been destroyed!\nCleaning task failed!")
             return
         
         room_coverage = self.world.get_room_coverage()

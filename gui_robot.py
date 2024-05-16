@@ -4,7 +4,8 @@ from brain import Brain
 from random_path import RandomPath
 
 class GuiRobot(QtWidgets.QGraphicsPolygonItem):
-    
+    algorithms = ["Random Path", "A* Path", "Greedy Path"]
+    vacuum_power = ["Standard", "Strong"]
     def __init__(self, robot, square_size, parent=None):
         super().__init__()
         self.robot = robot
@@ -68,8 +69,8 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
     
     def setting_algorithm(self, algorithm):
         if algorithm == "Random Path":
-                    brain = RandomPath(self.robot)
-                    self.robot.set_brain(brain)
+            brain = RandomPath(self.robot)
+            self.robot.set_brain(brain)
                    
         elif algorithm == "A* Path":
             pass
@@ -77,13 +78,19 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
             pass
         else:
             pass
+
+
+    def setting_vacuum_power(self, vacuum_power):
+        if vacuum_power == "Standard":
+            self.robot.mode = 0
+        elif vacuum_power == "Strong":
+            self.robot.mode = 1
     
     def mousePressEvent(self, event):
         if self.robot.destroyed and not self.robot.is_incomplete():
             self.robot.reset()
             event.accept()
 
-        # elif self.robot.is_incomplete():
         else:
             # print("item coordinates: ",event.pos())
             clicked_point = event.scenePos()
@@ -92,22 +99,26 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
             item = scene.itemAt(clicked_point, QtGui.QTransform())
             # print("clicked item type: ", type(item))
 
+            
             if item == self:
                 menu = QtWidgets.QMenu(self.parent)
-                for algorithm in Brain.algorithms:
+                menu_vaccum = QtWidgets.QMenu("Vaccum Power", self.parent)
+                menu_algorithm = QtWidgets.QMenu("Algorithm", self.parent)
+                menu.addMenu(menu_vaccum)
+                menu.addMenu(menu_algorithm)
+
+                for vacuum_power in self.vacuum_power:
+                    action = QtGui.QAction(vacuum_power, self.parent)
+                    action.triggered.connect(lambda checked, x = vacuum_power: self.setting_vacuum_power(x))
+                    menu_vaccum.addAction(action)
+
+
+                for algorithm in self.algorithms:
                     action = QtGui.QAction(algorithm, self.parent)
                     action.triggered.connect(lambda checked, x = algorithm: self.setting_algorithm(x))
-                    menu.addAction(action)
+                    menu_algorithm.addAction(action)
 
             
                 menu.exec(event.screenPos())
-
-        # else:
-        #     return
-
-
-
-
-
-
-
+                # menu_algorithm.exec(event.screenPos())
+                # menu_vaccum.exec(event.screenPos())
