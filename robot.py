@@ -167,9 +167,9 @@ class Robot():
         if self.battery > 100:
             self.battery -= 1
             self.brain.find_direction()
-        # elif 0 < self.battery <= 100:
-        #     self.battery -= 1
-        #     self.brain.find_direction_home()
+        elif 0 < self.battery <= 100:
+            self.battery -= 1
+            # self.brain.find_direction_home()
             # self.world.scene.update()
         else:
             self.destroyed = True
