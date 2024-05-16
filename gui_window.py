@@ -267,10 +267,7 @@ class GuiWindow(QtWidgets.QMainWindow):
         # self.clicked_y = pixel_y // self.square_size
 
         scene_pos = self.view.mapToScene(event.pos())
-        # test = event.scenePos()
-        # test_2 = event.pos()
 
-        # print("widget_pos?viewport? event.pos(): ", test_2)
         # print("event.pos() mapped to scene coordinates: ", scene_pos)
       
         pixel_x = scene_pos.x() - 182
@@ -431,7 +428,7 @@ class GuiWindow(QtWidgets.QMainWindow):
         self.button_layout.addWidget(self.button_start)
         
     def start_cleaning(self):     
-        self.timer2.start(60)
+        self.timer2.start(20)
         self.take_turn_all()
         self.change_bt_color_back(self.button_start) 
         # self.button_layout.removeWidget(self.button_start)
@@ -449,10 +446,7 @@ class GuiWindow(QtWidgets.QMainWindow):
 
     def pause_cleaning(self):
         self.timer2.stop()
-        # self.button_layout.removeWidget(self.button_pause)
-        # self.button_pause.deleteLater()
-        
-
+ 
     def show_notice(self):
         notice = QtWidgets.QMessageBox()
         notice.setWindowTitle("Success!")

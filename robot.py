@@ -75,9 +75,12 @@ class Robot():
         self.destroyed = False
         self.set_location(self.init_location)
         self.set_facing(self.init_facing)
+        self.battery = 1000
+        self.stuck_flag = 0
+        self.is_really_stuck = False
 
         self.world.get_square(self.location).remove_robot()
-        self.world.get_square(self.init_location).set_robot()
+        self.world.get_square(self.init_location).set_robot(self)
         self.world.destroyed_robots.remove(self)
         
     def is_incomplete(self):
@@ -103,7 +106,6 @@ class Robot():
         current_square = self.world.get_square(self.location)
         target_dirts = self.world.get_target_dirts(self.location)
         total = len(target_dirts)
-        print("current square total dirts:", total)
 
         if total > 0: 
             if self.mode == 0:
@@ -111,7 +113,6 @@ class Robot():
             elif self.mode == 1:
                 self.battery -= 1     #####  strong mode - consume 1 battery more per move
                 num_to_remove = random.randint(0, 2)
-            print("num_to_remove:", num_to_remove)
 
             if num_to_remove > total:
                 num_to_remove = total
@@ -159,7 +160,7 @@ class Robot():
         new_color = QtGui.QColor(current_color.red(), current_color.green(), current_color.blue(), intensity)       
         current_brush.setColor(QtGui.QColor(new_color))
         target_square_gui.setBrush(current_brush)
-        self.world.scene.update()        ########    update scene  ????
+        # self.world.scene.update()        ########    update scene  ????
 
 
     def act(self):
@@ -169,7 +170,7 @@ class Robot():
         # elif 0 < self.battery <= 100:
         #     self.battery -= 1
         #     self.brain.find_direction_home()
-        #     self.world.scene.update()
+            # self.world.scene.update()
         else:
             self.destroyed = True
 

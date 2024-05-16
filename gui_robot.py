@@ -51,12 +51,12 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
             brush.setColor(QtGui.QColor(255, 150, 150))
         elif self.robot.is_really_stuck:
             brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
-            brush.setColor(QtGui.QColor(255, 221, 51))
+            brush.setColor(QtGui.QColor(255, 210, 0))
         elif self.robot.is_incomplete():
             brush.setStyle(QtCore.Qt.BrushStyle.DiagCrossPattern)
             brush.setColor(QtGui.QColor(128, 128, 128))
         else:
-            brush.setStyle(QtCore.Qt.BrushStyle.Dense4Pattern)
+            brush.setStyle(QtCore.Qt.BrushStyle.Dense5Pattern)
             brush.setColor(QtGui.QColor(180, 160, 210))
 
         self.setBrush(brush)
@@ -89,17 +89,13 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
     def mousePressEvent(self, event):
         if self.robot.destroyed and not self.robot.is_incomplete():
             self.robot.reset()
-            event.accept()
+            # event.accept()
 
         else:
-            # print("item coordinates: ",event.pos())
             clicked_point = event.scenePos()
-            # print("scene coordinates: ", clicked_point)
             scene = self.parent.get_scene()
             item = scene.itemAt(clicked_point, QtGui.QTransform())
-            # print("clicked item type: ", type(item))
-
-            
+          
             if item == self:
                 menu = QtWidgets.QMenu(self.parent)
                 menu_vaccum = QtWidgets.QMenu("Vaccum Power", self.parent)

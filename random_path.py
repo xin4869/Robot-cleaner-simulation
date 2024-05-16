@@ -15,7 +15,6 @@ class RandomPath(Brain):
                 self.body.move()
             else:
                 for direction in Direction.direction_list:
-                    print(direction)
                     self.body.spin(direction)
                     if self.square_is_free(direction):
                         self.body.stuck_flag = 0
@@ -25,7 +24,6 @@ class RandomPath(Brain):
                 
                 self.body.is_really_stuck = True
                 self.body.stuck_flag += 1
-                print(self.body.stuck_flag)
                 if self.body.stuck_flag > 15:
                     self.body.destroyed = True
 
