@@ -6,26 +6,26 @@ class RandomPath(Brain):
         super().__init__(body)
 
     def find_direction(self):      
-        if not self.body.is_broken():
-            direction = Direction.random_direction()          
-            if self.square_is_free(direction):
-                self.body.stuck_flag = 0
-                self.body.is_really_stuck = False
+        direction = Direction.random_direction()    
+        self.body.spin(direction)      
+        if self.square_is_free(direction):
+            self.body.stuck_flag = 0
+            self.body.is_really_stuck = False              
+            self.body.move()
+        else:
+            for direction in Direction.direction_list:
                 self.body.spin(direction)
-                self.body.move()
-            else:
-                for direction in Direction.direction_list:
-                    self.body.spin(direction)
-                    if self.square_is_free(direction):
-                        self.body.stuck_flag = 0
-                        self.body.is_really_stuck = False
-                        self.body.move()
-                        return
-                
-                self.body.is_really_stuck = True
-                self.body.stuck_flag += 1
-                if self.body.stuck_flag > 15:
-                    self.body.destroyed = True
+                if self.square_is_free(direction):
+                    self.body.stuck_flag = 0
+                    self.body.is_really_stuck = False
+                    self.body.move()
+                    return
+            
+            self.body.is_really_stuck = True
+            self.body.stuck_flag += 1
+            if self.body.stuck_flag > 15:
+                self.body.destroyed = True
 
         
 
+######  now everytime after a move, update the robot direction_map

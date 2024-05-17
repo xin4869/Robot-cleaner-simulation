@@ -38,7 +38,7 @@ class Rules(QtWidgets.QDialog):
                     "<p style = 'font-size:16pt;'> 1. <strong>Gray</strong>: No algorithm has been set.<br><br>"
                     " 2. <strong>Purple</strong> : All good.<br><br>"
                     " 3. <strong>Yellow</strong> : Stuck.<br><br>"
-                    " 4. <strong>Soft Red</strong> : Battery low.<br><br>"
+                    " 4. <strong>Pink</strong> : Battery low.<br><br>"
                     " 5. <strong>Red</strong>: Destroyed.<p>"
 
                     "<h2 style = 'text-align:center;'>Algorithms</h2>"

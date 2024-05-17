@@ -7,6 +7,7 @@ class Square():
     def get_robot(self):
         return self.robot
     
+    
     def is_wall(self):
         return self.wall_flag
     

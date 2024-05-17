@@ -221,8 +221,9 @@ class GuiWindow(QtWidgets.QMainWindow):
                 if not ok:
                     self.change_bt_color_back(self.button_initbot)
                     return     
-            new_robot = Robot(name)      
-
+            new_robot = Robot(name)    
+            # direction_map = [[1 for _ in range(self.world.get_width())] for _ in range(self.world.get_height())]
+            # new_robot.set_map(direction_map)
 
             direction, ok = QtWidgets.QInputDialog.getText(self, "Initialize robot direction", f"Which direction should Robot {name} face? Enter one of these: N, S, E, W (North, South, East, West).")       
             if ok:

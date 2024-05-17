@@ -1,6 +1,7 @@
 from direction import Direction
 from error import Error
 from robotworld import RobotWorld
+from coordinates import Coordinates
 import random
 from PyQt6 import QtGui
 
@@ -8,11 +9,18 @@ class Robot():
     def __init__(self, name):
         self.set_name(name)
         self.world = None
-        self.location = None
         self.facing = None
         self.brain = None
         self.mode = 0
         self.battery = 1000
+
+        self.location = None
+        self.target_location = None
+        self.target_square = None
+
+        self.inner_map = {Coordinates(0,0): False}
+        self.inner_location = Coordinates(0,0)
+        self.target_inner_location = None
 
         self.destroyed = False
         self.is_really_stuck = False
@@ -21,9 +29,8 @@ class Robot():
         self.init_location = None
         self.init_facing = None
     
-        self.visited_squares = []
-      
-
+        self.visited_squares = set()
+ 
         
     def set_name(self, name):
         if not name:
@@ -46,6 +53,20 @@ class Robot():
     def get_location(self):
         return self.location
     
+    def set_inner_location(self, location):
+        self.inner_location = location
+
+    def get_inner_location(self):
+        return self.inner_location
+    
+    def inner_set_wall(self, coordinates):
+        if coordinates not in self.inner_map:
+            self.inner_map[coordinates] = True
+
+    def inner_set_free(self, coordinates):
+        if coordinates not in self.inner_map:
+            self.inner_map[coordinates] = False
+
     def get_location_square(self):
         return self.world.get_square(self.location)
     
@@ -143,17 +164,14 @@ class Robot():
     def move(self):
     
         current_square = self.get_location_square()
-        target_location = self.get_location().get_target_coordinates(self.get_facing(), 1)
-        target_square = self.get_world().get_square(target_location)
-        
-        self.location = target_location
         current_square.remove_robot()
-        target_square.set_robot(self)
-        self.visited_squares.append(target_square)  
+        self.location = self.target_location 
+        self.inner_location = self.target_inner_location    
+        self.target_square.set_robot(self)  
+        self.visited_squares.add(self.target_square)   ### add to set (set - always unique)
         self.clean()
     
-
-        target_square_gui = target_square.get_gui()
+        target_square_gui = self.target_square.get_gui()
         current_brush = target_square_gui.brush()
         current_color = target_square_gui.brush().color()
         intensity = max(current_color.alpha() - 15, 140)
@@ -164,15 +182,17 @@ class Robot():
 
 
     def act(self):
-        if self.battery > 100:
-            self.battery -= 1
-            self.brain.find_direction()
-        elif 0 < self.battery <= 100:
-            self.battery -= 1
-            # self.brain.find_direction_home()
-            # self.world.scene.update()
-        else:
-            self.destroyed = True
+        if not self.is_broken():
+            if self.battery > 100:
+                self.battery -= 1
+                self.brain.find_direction()
+        
+            elif 0 < self.battery <= 100:
+                self.battery -= 1
+                # self.brain.find_direction_home()
+                # self.world.scene.update()
+            else:
+                self.destroyed = True
 
         
 
