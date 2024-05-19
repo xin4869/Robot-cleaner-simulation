@@ -309,6 +309,7 @@ class GuiWindow(QtWidgets.QMainWindow):
                             QtWidgets.QMessageBox.warning(self, "Error", "Please click on an empty square!")
                         else:
                             self.new_robot.init_location = location
+                            self.new_robot.set_inner_location(self.new_robot.init_inner_location)
                             self.new_robot.set_location(location)
                             self.new_robot.set_world(self.world)
                             if self.new_robot not in self.world.robots:
@@ -429,7 +430,7 @@ class GuiWindow(QtWidgets.QMainWindow):
         self.button_layout.addWidget(self.button_start)
         
     def start_cleaning(self):     
-        self.timer2.start(20)
+        self.timer2.start(10)
         self.take_turn_all()
         self.change_bt_color_back(self.button_start) 
         # self.button_layout.removeWidget(self.button_start)

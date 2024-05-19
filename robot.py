@@ -18,8 +18,9 @@ class Robot():
         self.target_location = None
         self.target_square = None
 
-        self.inner_map = {Coordinates(0,0): False}
-        self.inner_location = Coordinates(0,0)
+        # self.inner_map = {Coordinates(0,0)}
+        self.init_inner_location = Coordinates(0,0)
+        self.inner_location = None
         self.target_inner_location = None
 
         self.destroyed = False
@@ -59,13 +60,13 @@ class Robot():
     def get_inner_location(self):
         return self.inner_location
     
-    def inner_set_wall(self, coordinates):
-        if coordinates not in self.inner_map:
-            self.inner_map[coordinates] = True
+    # def inner_set_wall(self, coordinates):
+    #     if coordinates not in self.inner_map:
+    #         self.inner_map[coordinates] = 1
 
-    def inner_set_free(self, coordinates):
-        if coordinates not in self.inner_map:
-            self.inner_map[coordinates] = False
+    # def inner_set_free(self, coordinates):
+    #     if coordinates not in self.inner_map:
+    #         self.inner_map[coordinates] = 0
 
     def get_location_square(self):
         return self.world.get_square(self.location)
@@ -95,6 +96,7 @@ class Robot():
     def reset(self):
         self.destroyed = False
         self.set_location(self.init_location)
+        self.set_inner_location(self.init_inner_location)
         self.set_facing(self.init_facing)
         self.battery = 1000
         self.stuck_flag = 0
@@ -188,9 +190,12 @@ class Robot():
                 self.brain.find_direction()
         
             elif 0 < self.battery <= 100:
-                self.battery -= 1
-                # self.brain.find_direction_home()
-                # self.world.scene.update()
+                if not self.inner_location == self.init_inner_location:
+                    self.battery -= 1           
+                    self.brain.go_home() 
+                else:
+                    self.battery = 1000
+                    self.brain.reset_all()                            
             else:
                 self.destroyed = True
 

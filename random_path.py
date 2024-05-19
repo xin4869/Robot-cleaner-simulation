@@ -23,7 +23,7 @@ class RandomPath(Brain):
             
             self.body.is_really_stuck = True
             self.body.stuck_flag += 1
-            if self.body.stuck_flag > 15:
+            if self.body.stuck_flag > 6:
                 self.body.destroyed = True
 
         

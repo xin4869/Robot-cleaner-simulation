@@ -34,10 +34,11 @@ class RobotWorld:
         target_dirts = []
         for dirt in self.dirts:
             dirt_location = dirt.get_location()
-            if dirt_location.is_equal(location):
+            if dirt_location == location :
                 target_dirts.append(dirt)
         return target_dirts
     
+
     def get_square(self, location):
         if self.contains(location):
             return self.board[location.get_y()][location.get_x()]
