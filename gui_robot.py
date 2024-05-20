@@ -2,9 +2,10 @@ from PyQt6 import QtWidgets, QtGui, QtCore
 from direction import Direction
 from brain import Brain
 from random_path import RandomPath
+from standard_mode import StandardMode
 
 class GuiRobot(QtWidgets.QGraphicsPolygonItem):
-    algorithms = ["Random Path", "A* Path", "Greedy Path"]
+    algorithms = ["Random Path", "Standard Mode", "Greedy Path"]
     vacuum_power = ["Standard", "Strong"]
     def __init__(self, robot, square_size, parent=None):
         super().__init__()
@@ -74,8 +75,10 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
             brain = RandomPath(self.robot)
             self.robot.set_brain(brain)
                    
-        elif algorithm == "A* Path":
-            pass
+        elif algorithm == "Standard Mode":
+            brain = StandardMode(self.robot)
+            self.robot.set_brain(brain)
+
         elif algorithm == "Greedy Path":
             pass
         else:

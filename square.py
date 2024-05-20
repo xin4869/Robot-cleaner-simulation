@@ -1,8 +1,7 @@
 class Square():
     def __init__(self, wall_flag = False):
         self.robot = None
-        self.wall_flag = wall_flag
-        
+        self.wall_flag = wall_flag      
         self.gui = None
     def get_robot(self):
         return self.robot

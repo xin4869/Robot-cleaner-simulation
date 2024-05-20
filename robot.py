@@ -18,7 +18,7 @@ class Robot():
         self.target_location = None
         self.target_square = None
 
-        # self.inner_map = {Coordinates(0,0)}
+        self.visited_inner = {Coordinates(0,0):1}
         self.init_inner_location = Coordinates(0,0)
         self.inner_location = None
         self.target_inner_location = None
@@ -97,6 +97,7 @@ class Robot():
         self.destroyed = False
         self.set_location(self.init_location)
         self.set_inner_location(self.init_inner_location)
+        self.visited_inner = {Coordinates(0,0):1}
         self.set_facing(self.init_facing)
         self.battery = 1000
         self.stuck_flag = 0
@@ -154,13 +155,16 @@ class Robot():
                 if current_square not in self.world.cleaned_squares:
                     self.world.cleaned_squares.append(current_square)
                     if current_square in self.world.dirty_squares:
-                        self.world.dirty_squares.remove(current_square)    ##### pop - index, remove - specific value
+                        self.world.dirty_squares.remove(current_square)   
+                return True ##### pop - index, remove - specific value
             else:
                 if current_square not in self.world.dirty_squares:
                     self.world.dirty_squares.append(current_square)
+                return False
         else:
             if current_square not in self.world.cleaned_squares:
                 self.world.cleaned_squares.append(current_square)
+            return True
 
 
     def move(self):
@@ -171,6 +175,7 @@ class Robot():
         self.inner_location = self.target_inner_location    
         self.target_square.set_robot(self)  
         self.visited_squares.add(self.target_square)   ### add to set (set - always unique)
+        self.visited_inner[self.target_inner_location] = self.visited_inner.get(self.target_inner_location, 0) + 1
         self.clean()
     
         target_square_gui = self.target_square.get_gui()
@@ -181,24 +186,6 @@ class Robot():
         current_brush.setColor(QtGui.QColor(new_color))
         target_square_gui.setBrush(current_brush)
         # self.world.scene.update()        ########    update scene  ????
-
-
-    def act(self):
-        if not self.is_broken():
-            if self.battery > 10:
-                self.battery -= 1
-                self.brain.find_direction()
-        
-            elif 0 < self.battery <= 10:
-                if not self.inner_location == self.init_inner_location:
-                    self.battery -= 1           
-                    self.brain.go_home() 
-                else:
-                    self.battery = 30
-                    self.brain.reset_all()                            
-            else:
-                self.destroyed = True
-
 
 
     def act(self):

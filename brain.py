@@ -10,7 +10,7 @@ class Brain(Robot):
         self.body = body
         self.end_node = self.body.init_inner_location
         self.current_node = None
-        self.moving_back_flag = False
+        # self.moving_back_flag = False
 
         # self.open_list = []
         # self.closed_list = []
@@ -141,7 +141,7 @@ class Brain(Robot):
             print("current_node - going to be checked surroundings", self.current_node)
             print("current node g h f:", self.current_node.g, self.current_node.h, self.current_node.f)
 
-
+            
             surrounding_nodes = []
             for direction in Direction.direction_list:
                 if self.square_is_free(direction):
@@ -150,7 +150,7 @@ class Brain(Robot):
                         print(f"node {node} not found, now creating new node")
                         node = Node(self.body.target_inner_location)
                         node.h = abs(node.position.x) + abs(node.position.y) 
-                    
+        
                     node.f = node.g + node.h                      
                     surrounding_nodes.append(node)
                     self.nodes.append(node)
@@ -170,5 +170,4 @@ class Brain(Robot):
             self.body.move()
             print("just next square - current inner location", self.body.inner_location)
             return
-
 
