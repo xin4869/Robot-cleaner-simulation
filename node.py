@@ -1,6 +1,6 @@
 class Node:
-    def __init__(self, parent=None, position=None):
-        self.parent = parent
+    def __init__(self, position=None):
+        # self.parent = parent
         self.position = position
 
         self.g = 0

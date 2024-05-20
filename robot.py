@@ -12,7 +12,7 @@ class Robot():
         self.facing = None
         self.brain = None
         self.mode = 0
-        self.battery = 1000
+        self.battery = 300
 
         self.location = None
         self.target_location = None
@@ -185,19 +185,42 @@ class Robot():
 
     def act(self):
         if not self.is_broken():
-            if self.battery > 100:
+            if self.battery > 10:
                 self.battery -= 1
                 self.brain.find_direction()
         
-            elif 0 < self.battery <= 100:
+            elif 0 < self.battery <= 10:
                 if not self.inner_location == self.init_inner_location:
                     self.battery -= 1           
                     self.brain.go_home() 
                 else:
-                    self.battery = 1000
+                    self.battery = 30
                     self.brain.reset_all()                            
             else:
                 self.destroyed = True
+
+
+
+    def act(self):
+        if not self.is_broken():
+            if self.battery > 150:
+                self.battery -= 1
+                self.brain.find_direction()
+        
+            elif 0 < self.battery <= 150:
+                if not self.inner_location == self.init_inner_location:
+                    self.battery -= 1           
+                    self.brain.go_home() 
+                else:
+                    self.battery = 300
+                    self.brain.reset_all()                            
+            else:
+                if not self.inner_location == self.init_inner_location:
+                    self.destroyed = True
+                else:
+                    self.battery = 300
+                    self.brain.reset_all()
+
 
         
 

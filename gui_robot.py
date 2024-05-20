@@ -46,9 +46,9 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
         if self.robot.destroyed:
             brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
             brush.setColor(QtGui.QColor(255, 0, 0))   ### red - destroyed
-        elif 0 < self.robot.battery <= 100:
+        elif 0 < self.robot.battery <= 150:
             brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
-            brush.setColor(QtGui.QColor(255, 0, 127))   ### pink - low battery
+            brush.setColor(QtGui.QColor(240, 128, 128))   ### pink - low battery
         elif self.robot.is_really_stuck:
             brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
             brush.setColor(QtGui.QColor(255, 222, 0))  ### yellow - stuck
@@ -58,6 +58,8 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
         else:
             brush.setStyle(QtCore.Qt.BrushStyle.Dense5Pattern)
             brush.setColor(QtGui.QColor(180, 160, 210))   ### purple - normal
+            # brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
+            # brush.setColor(QtGui.QColor(240, 128, 128))
 
         self.setBrush(brush)
 
@@ -89,7 +91,7 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
     def mousePressEvent(self, event):
         if self.robot.destroyed and not self.robot.is_incomplete():
             self.robot.reset()
-            # event.accept()
+            event.accept()
 
         else:
             clicked_point = event.scenePos()
