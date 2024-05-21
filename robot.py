@@ -221,28 +221,24 @@ class Robot():
         # self.world.scene.update()        ########    update scene  ????
 
 
+        
     def act(self):
         if not self.is_broken():
             if self.battery > 100:
                 self.battery -= 1
                 self.brain.find_direction()
-        
-            elif 0 < self.battery <= 100:
-                if not self.inner_location == self.init_inner_location:
-                    self.battery -= 1           
-                    self.brain.go_home() 
+            else:
+                if self.inner_location != self.init_inner_location:
+                    if self.battery == 0:
+                        self.destroyed = True
+                    else:
+                        self.battery -= 1           
+                        self.brain.go_home() 
                 else:
                     self.battery = 400
                     self.brain.reset_all()                            
-            else:
-                if not self.inner_location == self.init_inner_location:
-                    self.destroyed = True
-                else:
-                    self.battery = 400
-                    self.brain.reset_all()
+    
 
-
-        
 
 
             

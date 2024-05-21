@@ -16,6 +16,7 @@ from setting import Setting
 from gui_robot import GuiRobot
 
 import random
+import time
 
 class GuiWindow(QtWidgets.QMainWindow):
    
@@ -65,6 +66,9 @@ class GuiWindow(QtWidgets.QMainWindow):
         
         self.timer2 = QtCore.QTimer()
         self.timer2.timeout.connect(self.take_turn_all)
+
+        self.starting_time = None
+        self.finishing_time = None
         
 
     def init_window(self):
@@ -429,7 +433,8 @@ class GuiWindow(QtWidgets.QMainWindow):
         self.button_start.clicked.connect(self.start_cleaning)
         self.button_layout.addWidget(self.button_start)
         
-    def start_cleaning(self):     
+    def start_cleaning(self):  
+        self.starting_time = time.time()   
         self.timer2.start(10)
         self.take_turn_all()
         self.change_bt_color_back(self.button_start) 
@@ -450,9 +455,12 @@ class GuiWindow(QtWidgets.QMainWindow):
         self.timer2.stop()
  
     def show_notice(self):
+        duration = self.finishing_time - self.starting_time
+        minutes = int(duration // 60)
+        seconds = int(duration % 60)
         notice = QtWidgets.QMessageBox()
         notice.setWindowTitle("Success!")
-        notice.setText(f"Cleaning target achieved!\nRoom coverage: {self.world.get_room_coverage()} \nClean level: {self.world.get_clean_level()}")
+        notice.setText(f"Cleaning target achieved!\nRoom coverage: {self.world.get_room_coverage()} \nClean level: {self.world.get_clean_level()}\nDuration: {minutes} minutes {seconds} seconds!")
         notice.exec()
 
     def take_turn_all(self):
@@ -467,8 +475,11 @@ class GuiWindow(QtWidgets.QMainWindow):
         room_coverage = self.world.get_room_coverage()
         clean_level = self.world.get_clean_level()
         if room_coverage >= self.world.room_coverage_taget and clean_level >= self.world.clean_level_target:
+            self.finishing_time = time.time()
+            
             self.timer2.stop()
             self.show_notice()
+
             return
      
     def get_gui_robots(self):
