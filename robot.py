@@ -108,49 +108,6 @@ class Robot():
     def spin(self, direction):
         self.facing = direction
 
-    def clean(self):
-        current_square = self.world.get_square(self.location)
-        target_dirts = self.world.get_target_dirts(self.location)
-        total = len(target_dirts)
-     
-        if total > 0: 
-            if self.mode == 0:
-                num_to_remove = random.randint(0, 1)
-            elif self.mode == 1:
-                self.battery -= 1     #####  strong mode - consume 1 battery more per move
-                num_to_remove = random.randint(0, 2)
-
-            if num_to_remove > total:
-                num_to_remove = total
-
-            for _ in range(num_to_remove):
-                if len(target_dirts) > 1:
-                    removed_dirt = target_dirts.pop(random.randint(0, len(target_dirts) - 1))
-                else:
-                    removed_dirt = target_dirts.pop(0)
-
-                self.world.dirts.remove(removed_dirt)
-                self.world.scene.removeItem(removed_dirt.get_dirt_gui())
-                self.world.scene.update()        ########## UPDATE SCENE?????
-                del removed_dirt
-            
-
-            if num_to_remove >= total:
-                if current_square not in self.world.cleaned_squares:
-                    self.world.cleaned_squares.append(current_square)
-                    if current_square in self.world.dirty_squares:
-                        self.world.dirty_squares.remove(current_square)
-                self.brain.deep_clean = False   
-            else:
-                if current_square not in self.world.dirty_squares:
-                    self.world.dirty_squares.append(current_square)
-                self.brain.deep_clean = True
-        else:
-            if current_square not in self.world.cleaned_squares:
-                self.world.cleaned_squares.append(current_square)
-            self.brain.deep_clean = False
-
-
     # def clean(self):
     #     current_square = self.world.get_square(self.location)
     #     target_dirts = self.world.get_target_dirts(self.location)
@@ -194,6 +151,51 @@ class Robot():
     #         self.brain.deep_clean = False
 
 
+    def clean(self):
+        current_square = self.world.get_square(self.location)
+        target_dirts = self.world.get_target_dirts(self.location)
+        total = len(target_dirts)
+        dirt_removed = 0
+     
+        if total > 0: 
+            for dirt in target_dirts:
+                if self.mode == 0:
+                    num = random.randint(0, 9)
+                    if num <= 5:
+                        target_dirts.remove(dirt)
+                        self.world.dirts.remove(dirt)
+                        self.world.scene.removeItem(dirt.get_dirt_gui())
+                        self.world.scene.update()        ########## UPDATE SCENE?????
+                        del dirt
+                        dirt_removed += 1
+
+                elif self.mode == 1:
+                    self.battery -= 1     #####  strong mode - consume 1 battery more per move
+                    num = random.randint(0, 9)
+                    if num <= 7:
+                        target_dirts.remove(dirt)
+                        self.world.dirts.remove(dirt)
+                        self.world.scene.removeItem(dirt.get_dirt_gui())
+                        self.world.scene.update()        ########## UPDATE SCENE?????
+                        del dirt
+                        dirt_removed += 1
+
+            if dirt_removed >= total:
+                if current_square not in self.world.cleaned_squares:
+                    self.world.cleaned_squares.append(current_square)
+                    if current_square in self.world.dirty_squares:
+                        self.world.dirty_squares.remove(current_square)
+                self.brain.deep_clean = False   
+            else:
+                if current_square not in self.world.dirty_squares:
+                    self.world.dirty_squares.append(current_square)
+                self.brain.deep_clean = True
+        else:
+            if current_square not in self.world.cleaned_squares:
+                self.world.cleaned_squares.append(current_square)
+            self.brain.deep_clean = False
+
+
 
     def move(self):
     
@@ -207,7 +209,6 @@ class Robot():
         self.target_square.set_robot(self)  
         self.visited_squares.add(self.target_square)   ### add to set (set - always unique)
         
-        print(f"after move, current inner location{self.inner_location}, visited times is{self.visited_inner[self.inner_location]}")
         self.clean()
         
         target_square_gui = self.target_square.get_gui()
@@ -222,7 +223,7 @@ class Robot():
 
     def act(self):
         if not self.is_broken():
-            if self.battery > 150:
+            if self.battery > 100:
                 self.battery -= 1
                 self.brain.find_direction()
         

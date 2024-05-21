@@ -91,18 +91,17 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
             self.robot.mode = 0
         elif vacuum_power == "Strong":
             self.robot.mode = 1
-    
-    def mousePressEvent(self, event):
-        if self.robot.destroyed and not self.robot.is_incomplete():
-            self.robot.reset()
-            event.accept()
 
-        else:
-            clicked_point = event.scenePos()
-            scene = self.parent.get_scene()
-            item = scene.itemAt(clicked_point, QtGui.QTransform())
-          
-            if item == self:
+
+    def mousePressEvent(self, event):
+        clicked_point = event.scenePos()
+        scene = self.parent.get_scene()
+        item = scene.itemAt(clicked_point, QtGui.QTransform())
+        
+        if item == self:
+            if self.robot.destroyed and not self.robot.is_incomplete():
+                self.robot.reset()
+            else:
                 menu = QtWidgets.QMenu(self.parent)
                 menu_vaccum = QtWidgets.QMenu("Vaccum Power", self.parent)
                 menu_algorithm = QtWidgets.QMenu("Algorithm", self.parent)
@@ -122,5 +121,4 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
 
             
                 menu.exec(event.screenPos())
-                # menu_algorithm.exec(event.screenPos())
-                # menu_vaccum.exec(event.screenPos())
+          
