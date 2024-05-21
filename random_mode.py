@@ -1,7 +1,7 @@
 from direction import Direction
 from brain import Brain
 
-class RandomPath(Brain):
+class RandomMode(Brain):
     def __init__(self, body):
         super().__init__(body)
 
@@ -27,5 +27,3 @@ class RandomPath(Brain):
                 self.body.destroyed = True
 
         
-
-######  now everytime after a move, update the robot direction_map

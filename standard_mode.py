@@ -8,10 +8,9 @@ class StandardMode(Brain):
     def __init__(self, body):
         super().__init__(body)
 
-
     def find_direction(self):
-        nearby_spots = {}
 
+        nearby_spots = {}
         for direction in Direction.direction_list:    
             if self.square_is_free(direction):               
                 print(f"target inner location {self.body.target_inner_location} is checked to be free")

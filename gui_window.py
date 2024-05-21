@@ -9,7 +9,7 @@ from direction import Direction
 from square import Square
 from dirt import Dirt
 from brain import Brain
-from random_path import RandomPath
+from random_mode import RandomMode
 from rules import Rules
 from setting import Setting
 

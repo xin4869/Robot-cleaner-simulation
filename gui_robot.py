@@ -1,7 +1,7 @@
 from PyQt6 import QtWidgets, QtGui, QtCore
 from direction import Direction
 from brain import Brain
-from random_path import RandomPath
+from random_mode import RandomMode
 from standard_mode import StandardMode
 
 class GuiRobot(QtWidgets.QGraphicsPolygonItem):
@@ -71,8 +71,8 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
 
     
     def setting_algorithm(self, algorithm):
-        if algorithm == "Random Path":
-            brain = RandomPath(self.robot)
+        if algorithm == "Random Mode":
+            brain = RandomMode(self.robot)
             self.robot.set_brain(brain)
                    
         elif algorithm == "Standard Mode":
