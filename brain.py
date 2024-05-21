@@ -10,6 +10,7 @@ class Brain(Robot):
         self.body = body
         self.end_node = self.body.init_inner_location
         self.current_node = None
+        self.deep_clean = False
         # self.moving_back_flag = False
 
         # self.open_list = []

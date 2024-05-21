@@ -3,9 +3,10 @@ from direction import Direction
 from brain import Brain
 from random_mode import RandomMode
 from standard_mode import StandardMode
+from dirt_prioritizer import DirtPrioritizer
 
 class GuiRobot(QtWidgets.QGraphicsPolygonItem):
-    algorithms = ["Random Path", "Standard Mode", "Greedy Path"]
+    algorithms = ["Random mode", "Standard mode", "Deep clean mode"]
     vacuum_power = ["Standard", "Strong"]
     def __init__(self, robot, square_size, parent=None):
         super().__init__()
@@ -18,7 +19,6 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
         
         # brush = QtGui.QBrush(QtCore.Qt.BrushStyle.SolidPattern)
         # self.setBrush(brush)
-
 
     def triangle(self):
         triangle = QtGui.QPolygonF()
@@ -47,7 +47,7 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
         if self.robot.destroyed:
             brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
             brush.setColor(QtGui.QColor(255, 0, 0))   ### red - destroyed
-        elif 0 < self.robot.battery <= 150:
+        elif 0 < self.robot.battery <= 100:
             brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
             brush.setColor(QtGui.QColor(240, 128, 128))   ### pink - low battery
         elif self.robot.is_really_stuck:
@@ -71,16 +71,17 @@ class GuiRobot(QtWidgets.QGraphicsPolygonItem):
 
     
     def setting_algorithm(self, algorithm):
-        if algorithm == "Random Mode":
+        if algorithm == "Random mode":
             brain = RandomMode(self.robot)
             self.robot.set_brain(brain)
                    
-        elif algorithm == "Standard Mode":
+        elif algorithm == "Standard mode":
             brain = StandardMode(self.robot)
             self.robot.set_brain(brain)
 
-        elif algorithm == "Greedy Path":
-            pass
+        elif algorithm == "Deep clean mode":
+            brain = DirtPrioritizer(self.robot)
+            self.robot.set_brain(brain)
         else:
             pass
 

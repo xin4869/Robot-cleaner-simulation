@@ -9,18 +9,14 @@ class StandardMode(Brain):
         super().__init__(body)
 
     def find_direction(self):
-
-        nearby_spots = {}
+        nearby_spots = {}       
         for direction in Direction.direction_list:    
             if self.square_is_free(direction):               
-                print(f"target inner location {self.body.target_inner_location} is checked to be free")
                 penalty = self.body.visited_inner.get(self.body.target_inner_location, 0)
                 nearby_spots[direction] = penalty
-                print(f"target inner location {self.body.target_inner_location} in direction {direction} has been visited times {penalty}")
-
+            
         if nearby_spots:
             direction = min(nearby_spots, key=nearby_spots.get)
-            print("the CHOSEN min visited times direction :",direction)
             self.body.spin(direction)
             self.body.stuck_flag = 0
             self.body.is_really_stuck = False

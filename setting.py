@@ -23,8 +23,8 @@ class Setting(QtWidgets.QDialog):
 
         clean_level = QtWidgets.QLabel("Select cleaning mode:")
         self.layout.addWidget(clean_level)
-        self.clean_level_fast = QtWidgets.QRadioButton("Fast clean")
-        self.clean_level_deep = QtWidgets.QRadioButton("Deep clean")
+        self.clean_level_fast = QtWidgets.QRadioButton("Prioritize coverage")
+        self.clean_level_deep = QtWidgets.QRadioButton("Prioritize performance")
         self.clean_level_fast.setChecked(True)
 
         clean_level_group = QtWidgets.QButtonGroup(self)
