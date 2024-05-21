@@ -176,6 +176,7 @@ class Robot():
         self.target_square.set_robot(self)  
         self.visited_squares.add(self.target_square)   ### add to set (set - always unique)
         self.visited_inner[self.target_inner_location] = self.visited_inner.get(self.target_inner_location, 0) + 1
+        print(f"after move, for inner location{self.target_inner_location}, visited times is{self.visited_inner[self.target_inner_location]}")
         self.clean()
     
         target_square_gui = self.target_square.get_gui()

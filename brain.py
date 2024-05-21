@@ -138,8 +138,8 @@ class Brain(Robot):
             else:
                 self.current_node = self.get_node(self.body.inner_location)
 
-            print("current_node - going to be checked surroundings", self.current_node)
-            print("current node g h f:", self.current_node.g, self.current_node.h, self.current_node.f)
+            # print("current_node - going to be checked surroundings", self.current_node)
+            # print("current node g h f:", self.current_node.g, self.current_node.h, self.current_node.f)
 
             
             surrounding_nodes = []
@@ -147,7 +147,7 @@ class Brain(Robot):
                 if self.square_is_free(direction):
                     node = self.get_node(self.body.target_inner_location)
                     if not node:
-                        print(f"node {node} not found, now creating new node")
+                        # print(f"node {node} not found, now creating new node")
                         node = Node(self.body.target_inner_location)
                         node.h = abs(node.position.x) + abs(node.position.y) 
         
@@ -155,19 +155,19 @@ class Brain(Robot):
                     surrounding_nodes.append(node)
                     self.nodes.append(node)
 
-            print("surrounding nodes - g h f:")
-            for node in surrounding_nodes:
-                print(node, node.g, node.h, node.f) 
+            # print("surrounding nodes - g h f:")
+            # for node in surrounding_nodes:
+                # print(node, node.g, node.h, node.f) 
 
             self.current_node = min(surrounding_nodes, key=lambda node: node.f)
-            print("New minimal F node/ current node:", self.current_node)
+            # print("New minimal F node/ current node:", self.current_node)
             self.current_node.g += 10
             self.current_node.f = self.current_node.g + self.current_node.h
-            print("current node g h f:", self.current_node.g, self.current_node.h, self.current_node.f)
+            # print("current node g h f:", self.current_node.g, self.current_node.h, self.current_node.f)
             direction = self.body.inner_location.get_target_direction(self.current_node.position)
             self.body.spin(direction)
             self.square_is_free(direction)
             self.body.move()
-            print("just next square - current inner location", self.body.inner_location)
+            # print("just next square - current inner location", self.body.inner_location)
             return
 
