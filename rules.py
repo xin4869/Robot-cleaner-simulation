@@ -5,7 +5,7 @@ class Rules(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Robot World Rules")
-        self.setFixedSize(600, 1200)
+        self.setFixedSize(600, 1000)
         rule = QtWidgets.QTextEdit(self)
 
        
@@ -21,7 +21,6 @@ class Rules(QtWidgets.QDialog):
                     "5. If the robot is destroyed(red), you may click on the robot to reset it.<br>"
                     "Note: A stuck robot will be destroyed after 6 failed attempts to move.<p>"
                     
-
                      "<h2 style = 'text-align:center;'>Add robot</h2>"
                     "<p style = 'font-size:16pt;'>1. Click the button <u>Add Robot</u>.<br><br>"
                     "2. Click on the squares in which you want to place the robot.<br><br>"
@@ -42,14 +41,16 @@ class Rules(QtWidgets.QDialog):
                     " 5. <strong>Red</strong>: Destroyed.<p>"
 
                     "<h2 style = 'text-align:center;'>Algorithms</h2>"
-                    "<p style = 'font-size:16pt;'>1. <strong>Random Path</strong>: The robot moves in random direction.<br><br>"
-                    "2. <strong>A * Path</strong>: The robot moves according to the A* algorithm.<p>")
+                    "<p style = 'font-size:16pt;'>1. <strong>Random Mode</strong>: The robot moves in random direction.<br><br>"
+                    "2. <strong>Standard Mode</strong>: The robot try to cover the whole room efficiently by reducing repeatitive movements.<br><br>"
+                    "3. <strong>Dirt Prioritizer Mode</strong>: The robot will move on only when all dirt at current spot is removed, while trying to cover the whole room efficiently by reducing repeatitive movements.<br><br>"
+                    "4. <strong>Recharging</strong>: Every move will consume 1-2 battery depending on vacuum power. When the battery level is lower than 1/4, the robot will find its way back to initial location to recharge. <p>")
         
         rule.setReadOnly(True)
         rule.setFontFamily("Arial")
         rule.setHtml(text)
         # rule.setText(text)
-        rule.setFixedSize(600, 1200)
+        rule.setFixedSize(600, 1000)
         # rule.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
         # document = rule.document()

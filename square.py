@@ -1,14 +1,20 @@
+from coordinates import Coordinates
+
 class Square():
-    def __init__(self, x, y, wall_flag = False):
+    def __init__(self, x=None, y=None, wall_flag = False):
         self.x = x
         self.y = y
         self.robot = None
         self.wall_flag = wall_flag      
         self.gui = None
+
+    def get_location(self):
+        return Coordinates(self.x, self.y)
+
+
     def get_robot(self):
         return self.robot
-    
-    
+      
     def is_wall(self):
         return self.wall_flag
     

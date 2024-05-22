@@ -14,6 +14,7 @@ from rules import Rules
 from setting import Setting
 
 from gui_robot import GuiRobot
+from gui_square import GuiSquare
 
 import random
 import time
@@ -116,28 +117,28 @@ class GuiWindow(QtWidgets.QMainWindow):
         
         
     def create_world(self):
-        # text,ok = QtWidgets.QInputDialog.getMultiLineText(self, 'Create Robot World', 'Enter world width dimension, Max: 20:')
-        # if ok:
-        #     if text == "":
-        #         QtWidgets.QMessageBox.warning(self, "Error", "Please enter width dimensions!")
-        #         self.change_bt_color_back(self.button_initworld)
-        #     elif text.isdigit() == False: 
-        #         QtWidgets.QMessageBox.warning(self, "Error", "Please enter only numeric values!")
-        #         self.change_bt_color_back(self.button_initworld)
-        #     else:
-        #         width = int(text)
-        #         text,ok = QtWidgets.QInputDialog.getMultiLineText(self, 'Create Robot World', 'Enter world height dimension, Max: 15')
-                # if ok:
-        #             if text == "":
-        #                 QtWidgets.QMessageBox.warning(self, "Error", "Please enter height dimensions!")
-        #                 self.change_bt_color_back(self.button_initworld)
-        #             elif text.isdigit() == False: 
-        #                 QtWidgets.QMessageBox.warning(self, "Error", "Please enter only numeric values!")
-        #                 self.change_bt_color_back(self.button_initworld)
-        #             else:
-        #                 height = int(text)
-                        width = 10
-                        height = 8
+        text,ok = QtWidgets.QInputDialog.getMultiLineText(self, 'Create Robot World', 'Enter world width dimension, Max: 20:')
+        if ok:
+            if text == "":
+                QtWidgets.QMessageBox.warning(self, "Error", "Please enter width dimensions!")
+                self.change_bt_color_back(self.button_initworld)
+            elif text.isdigit() == False: 
+                QtWidgets.QMessageBox.warning(self, "Error", "Please enter only numeric values!")
+                self.change_bt_color_back(self.button_initworld)
+            else:
+                width = int(text)
+                text,ok = QtWidgets.QInputDialog.getMultiLineText(self, 'Create Robot World', 'Enter world height dimension, Max: 15')
+                if ok:
+                    if text == "":
+                        QtWidgets.QMessageBox.warning(self, "Error", "Please enter height dimensions!")
+                        self.change_bt_color_back(self.button_initworld)
+                    elif text.isdigit() == False: 
+                        QtWidgets.QMessageBox.warning(self, "Error", "Please enter only numeric values!")
+                        self.change_bt_color_back(self.button_initworld)
+                    else:
+                        height = int(text)
+                        # width = 10
+                        # height = 8
                         self.world = RobotWorld(width, height, self.scene)
                         #QtWidgets.QMessageBox.information(self, "Success", "Robot World initialized successfully!")
                         # msg_box = QtWidgets.QMessageBox()
@@ -159,16 +160,11 @@ class GuiWindow(QtWidgets.QMainWindow):
 
 
     def draw_grid(self):
-        for y in range(self.world.get_height()):
-            for x in range(self.world.get_width()):     
-                square = self.world.get_square(Coordinates(x, y))         
-                x_gui = x * self.square_size
-                y_gui = y * self.square_size
-                square_gui = QtWidgets.QGraphicsRectItem(x_gui, y_gui, self.square_size, self.square_size)
-                square.set_gui(square_gui)
-                square_gui.setBrush(QtGui.QColor(255, 255, 255))
+        for row in self.world.board:
+            for square in row:     
+                gui_square = GuiSquare(square, self.square_size, self)
 
-                self.scene.addItem(square_gui)  
+                self.scene.addItem(gui_square)  
                 self.scene.setSceneRect(self.scene.itemsBoundingRect())
                 self.view.adjustSize()
                 self.view.show()
@@ -189,21 +185,16 @@ class GuiWindow(QtWidgets.QMainWindow):
             self.adding_robot = False
             self.obs_bt_clicked = True
 
-    def draw_obs(self, coordinates):
-        if self.grid_drawn:
-            square = self.world.get_square(coordinates)
-            if square.is_wall(): 
-                # x_gui = coordinates.get_x() * self.square_size
-                # y_gui = coordinates.get_y() * self.square_size
-                # obs_gui = QtWidgets.QGraphicsRectItem(x_gui, y_gui, self.square_size, self.square_size)
-                gui = square.get_gui()
-                current_brush = gui.brush()
-                current_brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
-                current_brush.setColor(QtGui.QColor(200, 200, 200))
-                gui.setBrush(current_brush)
-                self.scene.update()
-
-                # self.scene.addItem(obs_gui)
+    # def draw_obs(self, coordinates):
+    #     if self.grid_drawn:
+    #         square = self.world.get_square(coordinates)
+    #         if square.is_wall(): 
+    #             gui = square.get_gui()
+    #             current_brush = gui.brush()
+    #             current_brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
+    #             current_brush.setColor(QtGui.QColor(200, 200, 200))
+    #             gui.setBrush(current_brush)
+    #             self.scene.update()
 
     def init_bot_bt(self):
         if self.grid_drawn:
@@ -264,68 +255,70 @@ class GuiWindow(QtWidgets.QMainWindow):
                 
                 
 
-    def mousePressEvent(self, event):
-        # pixel_x = event.pos().x()
-        # self.clicked_x = pixel_x // self.square_size
+    # def mousePressEvent(self, event):
+    #     # pixel_x = event.pos().x()
+    #     # self.clicked_x = pixel_x // self.square_size
 
-        # pixel_y = event.pos().y()
-        # self.clicked_y = pixel_y // self.square_size
+    #     # pixel_y = event.pos().y()
+    #     # self.clicked_y = pixel_y // self.square_size
 
-        scene_pos = self.view.mapToScene(event.pos())
+    #     scene_pos = self.view.mapToScene(event.pos())
 
-        # print("event.pos() mapped to scene coordinates: ", scene_pos)
+    #     # print("event.pos() mapped to scene coordinates: ", scene_pos)
       
-        pixel_x = scene_pos.x() - 182
-        pixel_y = scene_pos.y() - 15
+    #     pixel_x = scene_pos.x() - 182
+    #     pixel_y = scene_pos.y() - 15
       
-        self.clicked_x = int((pixel_x/self.square_size))
-        self.clicked_y = int((pixel_y/self.square_size))
+    #     self.clicked_x = int((pixel_x/self.square_size))
+    #     self.clicked_y = int((pixel_y/self.square_size))
         
-        location = Coordinates(self.clicked_x, self.clicked_y)
+    #     location = Coordinates(self.clicked_x, self.clicked_y)
 
-        # print(f"Clicked on square ({self.clicked_x}, {self.clicked_y})")
-        # print(f"event.pos() mapped scene coordinates - 182: {pixel_x} | event.pos() mapped scene coordinates - 15: {pixel_y}")
+    #     # print(f"Clicked on square ({self.clicked_x}, {self.clicked_y})")
+    #     # print(f"event.pos() mapped scene coordinates - 182: {pixel_x} | event.pos() mapped scene coordinates - 15: {pixel_y}")
 
 
-        if self.grid_drawn:
-            if pixel_x < 0 or pixel_y < 0 or pixel_x > self.square_size * self.world.width or pixel_y > self.square_size * self.world.height: 
-            # if self.clicked_x not in range(0, self.world.width) or self.clicked_y not in range(0, self.world.height):
-                QtWidgets.QMessageBox.warning(self, "Error", "Please click within the grid!")
-            else:             
-                if self.adding_obs: ###### Flag of choosing obstacle location
-                        location = Coordinates(self.clicked_x, self.clicked_y)
-                        clicked_square = self.world.get_square(location)
-                        if not clicked_square.is_empty():
-                            QtWidgets.QMessageBox.warning(self, "Error", "Please click on an empty square!")
-                        else:
-                            clicked_square.set_wall()
-                            self.added_obs_amount += 1
-                            self.draw_obs(location)
+    #     if self.grid_drawn:
+    #         if pixel_x < 0 or pixel_y < 0 or pixel_x > self.square_size * self.world.width or pixel_y > self.square_size * self.world.height: 
+    #         # if self.clicked_x not in range(0, self.world.width) or self.clicked_y not in range(0, self.world.height):
+    #             QtWidgets.QMessageBox.warning(self, "Error", "Please click within the grid!")
+    #         else:             
+    #             if self.adding_obs: ###### Flag of choosing obstacle location
+    #                     location = Coordinates(self.clicked_x, self.clicked_y)
+    #                     clicked_square = self.world.get_square(location)
+    #                     if not clicked_square.is_empty():
+    #                         QtWidgets.QMessageBox.warning(self, "Error", "Please click on an empty square!")
+    #                     else:
+    #                         clicked_square.set_wall()
+    #                         self.added_obs_amount += 1
+    #                         self.draw_obs(location)
 
-                elif self.adding_robot:  ###### Flag of choosing robot location 
-                    if self.new_robot is None:
-                        QtWidgets.QMessageBox.warning(self, "Error", "Please add robot first!")
+    #             elif self.adding_robot:  ###### Flag of choosing robot location 
+    #                 if self.new_robot is None:
+    #                     QtWidgets.QMessageBox.warning(self, "Error", "Please add robot first!")
                                     
-                    else:
-                        location = Coordinates(self.clicked_x, self.clicked_y)                  
-                        clicked_square = self.world.get_square(location)              
-                        if not clicked_square.is_empty():
-                            QtWidgets.QMessageBox.warning(self, "Error", "Please click on an empty square!")
-                        else:
-                            self.new_robot.init_location = location
-                            self.new_robot.set_inner_location(self.new_robot.init_inner_location)
-                            self.new_robot.set_location(location)
-                            self.new_robot.set_world(self.world)
-                            if self.new_robot not in self.world.robots:
-                                # self.world.add_robot(self.new_robot, location, self.new_robot.get_facing())  
+    #                 else:
+    #                     location = Coordinates(self.clicked_x, self.clicked_y)                  
+    #                     clicked_square = self.world.get_square(location)              
+    #                     if not clicked_square.is_empty():
+    #                         QtWidgets.QMessageBox.warning(self, "Error", "Please click on an empty square!")
+    #                     else:
+    #                         self.new_robot.init_location = location
+    #                         self.new_robot.set_inner_location(self.new_robot.init_inner_location)
+    #                         self.new_robot.set_location(location)
+    #                         self.new_robot.set_world(self.world)
+    #                         if self.new_robot not in self.world.robots:
+    #                             # self.world.add_robot(self.new_robot, location, self.new_robot.get_facing())  
                                 
-                                self.world.robots.append(self.new_robot)
-                                clicked_square.set_robot(self.new_robot)                         
+    #                             self.world.robots.append(self.new_robot)
+    #                             clicked_square.set_robot(self.new_robot)                         
                                 
-                                self.draw_robots(self.new_robot)
+    #                             self.draw_robots(self.new_robot)
 
-                                self.change_bt_color_back(self.button_initbot)                                  
-                                self.adding_robot = False            
+    #                             self.change_bt_color_back(self.button_initbot)                                  
+    #                             self.adding_robot = False            
+
+
 
 
                 
@@ -394,7 +387,7 @@ class GuiWindow(QtWidgets.QMainWindow):
 
     def place_dirts(self):
         if self.world_finalized:
-                num_dirts = random.randint(4 * self.world.width, 5 * self.world.height)
+                num_dirts = random.randint(20 * self.world.width, 30 * self.world.height)
                 for _ in range(num_dirts):
                     while True:
                         x = random.randint(0, self.world.width - 1)
@@ -453,6 +446,8 @@ class GuiWindow(QtWidgets.QMainWindow):
 
     def pause_cleaning(self):
         self.timer2.stop()
+        # current_time = time.time()
+        # duration = current_time - self.starting_time
  
     def show_notice(self):
         duration = self.finishing_time - self.starting_time

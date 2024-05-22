@@ -43,7 +43,7 @@ class RobotWorld:
         if self.contains(location):
             return self.board[location.get_y()][location.get_x()]
         else:
-            return Square(True)
+            return Square(wall_flag=True)
     
     def get_all_squares(self):
         all_squares = [square for row in self.board for square in row]
