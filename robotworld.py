@@ -6,7 +6,7 @@ class RobotWorld:
     def __init__(self, width, height, scene=None):
         self.width = width
         self.height = height
-        self.board = [[Square() for x in range(width)] for y in range(height)]
+        self.board = [[Square(x,y) for x in range(width)] for y in range(height)]
         self.robots = []
         self.dirts = []
         self.turn = 0

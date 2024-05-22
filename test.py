@@ -16,27 +16,39 @@ from rules import Rules
 from setting import Setting
 
 class Test(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QtWidgets.QApplication([])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+
     def setUp(self):
-        self.app = QtWidgets.QApplication([])
+        self.window = GuiWindow(100)
 
     def tearDown(self):
-        self.app.quit()
+        self.window.close()
 
     def test_window_setup(self):
-        window = GuiWindow(100)
-        self.assertEqual(window.square_size, 100)
-        
-        button = window.findChild(QtWidgets.QPushButton, 'Initialize grid')
+        self.assertEqual(self.window.square_size, 100)
+    
+    def test_rules_bt(self):  
+        button = self.window.findChild(QtWidgets.QPushButton, 'button_rules')
         self.assertIsNotNone(button)
 
-    def test_initalize_grid(self):
-        window = GuiWindow(100)
-        button = window.findChild(QtWidgets.QPushButton, 'Initialize grid')
+    def test_initalize_grid_bt(self):
+        button = self.window.findChild(QtWidgets.QPushButton, 'button_initworld')
         self.assertIsNotNone(button)
 
-        button.click()
-        self.assertEqual(window.world.width, 10)
-        self.assertEqual(window.world.height, 8)
-        self.assertEqual(window.grid_drawn, True)
-        self.assertTrue(window.world)
+        # button.click()
+        QtTest.QTest.mouseClick(button)
 
+        self.assertEqual(self.window.world.width, 10)
+        self.assertEqual(self.window.world.height, 8)
+        self.assertTrue(self.window.grid_drawn)
+        self.assertTrue(self.window.world)
+
+if __name__ == "__main__":
+    unittest.main()

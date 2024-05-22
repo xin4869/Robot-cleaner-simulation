@@ -1,5 +1,7 @@
 class Square():
-    def __init__(self, wall_flag = False):
+    def __init__(self, x, y, wall_flag = False):
+        self.x = x
+        self.y = y
         self.robot = None
         self.wall_flag = wall_flag      
         self.gui = None
