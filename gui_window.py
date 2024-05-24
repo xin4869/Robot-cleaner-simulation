@@ -211,7 +211,7 @@ class GuiWindow(QtWidgets.QMainWindow):
         name, ok = QtWidgets.QInputDialog.getText(self, 'Initialize Robot', 'Enter robot name:')
         if ok:
             while name in [robot.get_name() for robot in self.world.robots]:
-                response = QtWidgets.QMessageBox.warning(self, "Error", f"Robot {name} has already been added!")               
+                QtWidgets.QMessageBox.warning(self, "Error", f"Robot {name} has already been added!")               
                 name, ok = QtWidgets.QInputDialog.getText(self, 'Initialize Robot', 'Enter robot name:')
                 if not ok:
                     self.change_bt_color_back(self.button_initbot)
@@ -223,7 +223,7 @@ class GuiWindow(QtWidgets.QMainWindow):
             direction, ok = QtWidgets.QInputDialog.getText(self, "Initialize robot direction", f"Which direction should Robot {name} face? Enter one of these: N, S, E, W (North, South, East, West).")       
             if ok:
                 while direction.lower() not in ["n", "s", "e", "w"]:
-                    response = QtWidgets.QMessageBox.warning(self, "Error", "Invalid direction! Please enter a valid direction.")            
+                    QtWidgets.QMessageBox.warning(self, "Error", "Invalid direction! Please enter a valid direction.")            
                     direction, ok = QtWidgets.QInputDialog.getText(self, "Initialize robot direction", f"Which direction should Robot {name} face? Enter one of these: N, S, E, W")                 
                     if not ok:
                         self.change_bt_color_back(self.button_initbot)
@@ -455,7 +455,7 @@ class GuiWindow(QtWidgets.QMainWindow):
         seconds = int(duration % 60)
         notice = QtWidgets.QMessageBox()
         notice.setWindowTitle("Success!")
-        notice.setText(f"Cleaning target achieved!\nRoom coverage: {self.world.get_room_coverage()} \nClean level: {self.world.get_clean_level()}\nDuration: {minutes} minutes {seconds} seconds!")
+        notice.setText(f"Cleaning target achieved!\nRoom coverage: {self.world.get_room_coverage()} \nClean level: {self.world.get_clean_level():.2f}\nDuration: {minutes} minutes {seconds:.2f} seconds!")
         notice.exec()
 
     def take_turn_all(self):

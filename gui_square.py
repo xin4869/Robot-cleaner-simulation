@@ -34,28 +34,32 @@ class GuiSquare(QtWidgets.QGraphicsRectItem):
                         brush.setColor(QtGui.QColor(200, 200, 200))
                         brush.setStyle(QtCore.Qt.BrushStyle.CrossPattern)
                         self.setBrush(brush)
-                    else:
-                        QtWidgets.QMessageBox.warning(self.parent, "Warning", "Square is not empty!")
+                    # else:
+                    #     QtWidgets.QMessageBox.warning(self.parent, "Warning", "Square is not empty!")
 
                 elif self.parent.adding_robot:
-                    if self.parent.new_robot is None:
-                        QtWidgets.QMessageBox.warning(self.parent, "Warning", "Please add Robot first!")
-                    else:
-                        if self.square.is_empty():
-                            self.parent.new_robot.init_location = self.square.get_location()
-                            self.parent.new_robot.set_location(self.square.get_location())
-                            self.parent.new_robot.set_inner_location(self.parent.new_robot.init_inner_location)
+                    # if self.parent.new_robot is None:
+                    #     QtWidgets.QMessageBox.warning(self.parent, "Warning", "Please add Robot first!")
+                    # else:
+                    if self.square.is_empty():
+                        self.parent.new_robot.init_location = self.square.get_location()
+                        self.parent.new_robot.set_location(self.square.get_location())
+                        self.parent.new_robot.set_inner_location(self.parent.new_robot.init_inner_location)
 
-                            self.square.set_robot(self.parent.new_robot)
-                            self.parent.new_robot.set_world(self.parent.world)
-                            
-                            self.parent.draw_robots(self.parent.new_robot)                            
-                            self.parent.change_bt_color_back(self.parent.button_initbot)
+                        self.square.set_robot(self.parent.new_robot)
+                        self.parent.new_robot.set_world(self.parent.world)
+                        
+                        self.parent.draw_robots(self.parent.new_robot)                            
+                        self.parent.change_bt_color_back(self.parent.button_initbot)
 
-                            if self.parent.new_robot not in self.parent.world.robots:                   
-                                self.parent.world.robots.append(self.parent.new_robot)
+                        if self.parent.new_robot not in self.parent.world.robots:                   
+                            self.parent.world.robots.append(self.parent.new_robot)
+                        
+                        self.parent.adding_robot = False
                             
-                            self.parent.adding_robot = False
-                                
-                        else:
-                            QtWidgets.QMessageBox.warning(self.parent, "Warning", "Square is not empty!")
+                    # else:
+                    #     QtWidgets.QMessageBox.warning(self.parent, "Warning", "Square is not empty!")
+
+
+
+  
